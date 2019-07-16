@@ -83,6 +83,7 @@ class EasyYandexS3 {
 		}else{
 			file_body = file.buffer;
 			file_ext = '.'+fileType(file_body).ext;
+			if(file.name) file_upload_name = file.name;
 		}
 	
 		if(route.slice(-1)!="/") route+="/";
