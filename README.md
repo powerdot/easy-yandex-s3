@@ -51,12 +51,12 @@ https://console.cloud.yandex.ru/cloud
 ## Как с этим работать
 
 Установите npm-модуль в директории вашего проекта, это очень просто.
-```
+```bash
 npm i easy-yandex-s3
 ```
 
 ### Инициализируем работу с бакетом.
-```
+```javascript
   // Подключаем модуль
   var EasyYandexS3 = require("EasyYandexS3");
 
@@ -76,7 +76,7 @@ npm i easy-yandex-s3
 .Upload(***{параметры}***, ***"/папка в бакете/"***)
 
 Загрузка по расположению файла
-```
+```javascript
   var upload = await s3.Upload({path: path.resolve(__dirname, "./123.png")}, "/test/");
   console.log(upload);  // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
                         // если вернулся false - произошла ошибка
@@ -85,7 +85,7 @@ npm i easy-yandex-s3
 ```
 
 Загрузка по расположению файла, с указанием оригинального имени и расширения файла
-```
+```javascript
   var upload = await s3.Upload({
                                   path: path.resolve(__dirname, "./123.png"),
                                   save_name: true
@@ -97,7 +97,7 @@ npm i easy-yandex-s3
 ```
 
 Загрузка по расположению файла, с указанием имени файла для загрузки
-```
+```javascript
   var upload = await s3.Upload({
                                   path: path.resolve(__dirname, "./123.png"),
                                   name: "lolkek.png"
@@ -110,7 +110,7 @@ npm i easy-yandex-s3
 
 
 Загрузка буфера
-```
+```javascript
   var upload = await s3.Upload({
                                   buffer: file_buffer
                                }, "/test/");
@@ -121,7 +121,7 @@ npm i easy-yandex-s3
 ```
 
 Загрузка буфера с определением имени и расширения файла
-```
+```javascript
   var upload = await s3.Upload({
                                   buffer: file_buffer,
                                   name: "lolkek.png"
@@ -134,26 +134,30 @@ npm i easy-yandex-s3
 
 ### Получение списка директорий и файлов бакета
 
+.GetList(***"/директория бакета/"***)
+
 Получение корня бакета
-```
+```javascript
   var list = await s3.GetList();
 ```
 
 Получение списка директорий и файлов из конкретной директории
-```
+```javascript
   var list = await s3.GetList("/test/");
 ```
 
 ### Скачивание файла из бакета
 
+.Download(***"/путь до файла в бакете/"***, ***"/путь куда сохраняем на клиенте/"***)
+
 Скачивание файла и возвращение буфера этого файла
-```
+```javascript
   var download = await s3.Download('test/123.png');
 ```
 
 
 Скачивание файла и сохранение его в файл 
-```
+```javascript
   var download = await s3.Download('test/123.png', './myfile.png');
   
   // в download так же дополнительно вернется Buffer
@@ -163,8 +167,10 @@ npm i easy-yandex-s3
 
 ### Удаление файла из бакета
 
+.Remove(***"/путь до файла в бакете/"***)
+
 Удаляем файл
-```
+```javascript
   var remove = await s3.Remove('test/123.png');
 
   // возвращается true или false.
