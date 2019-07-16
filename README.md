@@ -1,1 +1,1 @@
-# easy_yandex-s3
+# easy-yandex-s3
