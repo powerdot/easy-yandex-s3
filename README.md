@@ -58,7 +58,7 @@ npm i easy-yandex-s3
 ### Инициализируем работу с бакетом.
 ```javascript
 // Подключаем модуль
-var EasyYandexS3 = require("EasyYandexS3");
+var EasyYandexS3 = require("easy-yandex-s3");
 
 // Инициализация
 var s3 = new EasyYandexS3({
