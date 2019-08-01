@@ -348,7 +348,7 @@ function readDir(dir_path, original_file_path, ignore_list){
 		var relative_dir_path = relative_file_path.replace(file_name, '');
 		
 		if( ignore_list.includes(file_name) ) continue;
-		if( ignore_list.includes(relative_file_path) ) continue;
+		if( ignore_list.includes(relative_file_path.replace(/\\/g, '/')) || ignore_list.includes(relative_file_path.replace(/\//g, '\\')) ) continue;
 
         if(fs.lstatSync(full_file_path).isDirectory()){
             paths.push(...readDir(full_file_path, original_file_path, ignore_list));
