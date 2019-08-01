@@ -52,6 +52,8 @@ class EasyYandexS3 {
 		this.debug = new_params.debug;
 
 		this.Bucket = params.Bucket;
+
+		this.default_ignore_list = ['.DS_Store'];
 	};
 
 
@@ -67,6 +69,7 @@ class EasyYandexS3 {
 	 * @param {String=} file.path Путь к файлу
 	 * @param {Boolean=} file.save_name Оставить оригинальное название файла. Работает только в случае передачи пути к файлу.
 	 * @param {String=} file.name Устаналивает название загружаемому файлу. Передавать с расширением.
+	 * @param {Array=} file.ignore Список игнорируемых файлов и папок
 	 * 
 	 * 
 	 * @param {String} route Папка загрузки - бакет
@@ -91,14 +94,18 @@ class EasyYandexS3 {
 			return u;
 		}
 
+		file.path = path.resolve(file.path);
+
 		if(!fs.existsSync(file.path)) throw "file/directory on path is not found ("+file.path+")";
 		if(!route) throw "route (2nd argument) is not defined";
 
 		if(fs.lstatSync(file.path).isDirectory()){
-			var dir_path = path.resolve(file.path);
+			var dir_path = file.path;
 			if(!fs.lstatSync(dir_path).isDirectory())  throw "directory on path is not found ("+dir_path+")";
 			if(debug) this._log("S3", debug_object, 'folder to upload found', file.path);
-			var u = await this._uploadDirectory(dir_path, file, route);
+			if(!file.ignore) file.ignore = [];
+			var ignore_list = [...this.default_ignore_list, ...file.ignore]
+			var u = await this._uploadDirectory(dir_path, file, route, ignore_list);
 			if(debug) this._log("S3", debug_object, 'folder upload done', u.length, 'files');
 			return u;
 		}
@@ -147,12 +154,12 @@ class EasyYandexS3 {
 	};
 
 
-	async _uploadDirectory(dir, params, route){
+	async _uploadDirectory(dir, params, route, ignore_list){
 		var debug = this.debug;
 		var debug_object = "_uploadDirectory";
 
 		var uploaded = [];
-		var threads = sliceArrayToThreads(readDir(dir), 1); // TODO params.threads
+		var threads = sliceArrayToThreads(readDir(dir, dir, ignore_list), 1); // TODO params.threads
 
 		// TODO Threads
 		// var thread_id = uniqid();
@@ -329,22 +336,27 @@ class EasyYandexS3 {
  * Получение массива всех вложенных файлов и папок и их файлов и папок и их файлов и папок...
  * @param {String} dir_path Путь до папки, которую сканируем
  * @param {String=} original_file_path 
+ * @param {Array} ignore_list
  */
-function readDir(dir_path, original_file_path){
+function readDir(dir_path, original_file_path, ignore_list){
     if(!original_file_path) original_file_path = dir_path;
     var dir_files = fs.readdirSync(dir_path);
     var paths = [];
     for(var file_name of dir_files){
         var full_file_path = path.resolve(dir_path, file_name);
-        var relative_file_path = full_file_path.replace(original_file_path+'/', '');
-        var relative_dir_path = relative_file_path.replace(file_name, '');
+        var relative_file_path = full_file_path.replace(original_file_path, '');
+		var relative_dir_path = relative_file_path.replace(file_name, '');
+		
+		if( ignore_list.includes(file_name) ) continue;
+		if( ignore_list.includes(relative_file_path) ) continue;
+
         if(fs.lstatSync(full_file_path).isDirectory()){
-            paths.push(...readDir(full_file_path, original_file_path));
+            paths.push(...readDir(full_file_path, original_file_path, ignore_list));
             continue;
-        }
+		}
         paths.push({full_file_path, relative_dir_path, file_name});
-        // console.log(full_file_path,'|',relative_dir_path,'|', file_name);
-    }
+	}
+	// console.log(paths);
     return paths;
 }
 
