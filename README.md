@@ -99,7 +99,7 @@ console.log(upload);    // <- Возвращает путь к файлу в х�
 123.png -> [bucket-name]/test/123.png
 
 ```javascript
-  var upload = await s3.Upload({
+var upload = await s3.Upload({
     path: path.resolve(__dirname, "./123.png"),
     save_name: true
 }, "/test/");
@@ -112,7 +112,7 @@ console.log(upload);    // Возвращает путь к файлу в хра
 123.png -> [bucket-name]/test/lolkek.png
 
 ```javascript
- var upload = await s3.Upload({
+var upload = await s3.Upload({
     path: path.resolve(__dirname, "./123.png"),
     name: "lolkek.png"
 }, "/test/");
