@@ -1,364 +1,369 @@
-[![Easy Yandex S3 Logo](https://storage.yandexcloud.net/actid-storage/easy-yandex-s3/eys3.png)](https://github.com/powerdot/easy-yandex-s3)
+const AWS = require('aws-sdk');
+var md5 = require("md5");
+var fs = require("fs");
+var path = require("path");
+const fileType = require('file-type');
+var mime = require('mime-types');
+var uniqid = require("uniqid");
 
-Использовать S3 API ***Яндекс.Облака*** еще проще.
-Хранилище называется у них там ***Object Storage***.
+/**
+ * Создание объекта для работы с S3 хранилищем
+ */
+class EasyYandexS3 {
+	/**
+	 * 
+	* @param {Object} params Параметры соединения, 4 обязательных параметра.
+	* @param {Object} params.auth Обязательно. Данные для доступа от сервисного аккаунта
+	* @param {String} params.auth.accessKeyId Обязательно. Идентификатор ключа сервисного аккаунта
+	* @param {String} params.auth.secretAccessKey Обязательно. Cекретный ключ сервисного аккаунта
+	* @param {String} params.Bucket Обязательно. ID бакета
+	* 
+	* @param {String=} params.endpoint_url Необязательно. Ссылка на S3 сервер, например, на storage.yandexcloud.net
+	* @param {String=} params.region Необязательно. Регион загрузки
+	* @param {Object=} params.httpOptions Необязательно. Установки http-запроса
+	* @param {Boolean=} params.debug Необязательно. Вывод дополнительной информации в консоль
+	 */
+	constructor(params) {
+		this.default_params = {
+			endpoint_url: 'https://storage.yandexcloud.net',
+			auth: {
+				accessKeyId: "",
+				secretAccessKey: ""
+			},
+			region: 'us-east-1',
+			httpOptions: {
+				timeout: 10000,
+				connectTimeout: 10000
+			},
+			Bucket: "",
+			debug: false
+		};
+		var new_params = {...this.default_params, ...params};
+		this.threads = {};
 
-## Оглавление
-* [Теория](#теория-orly) - что такое хранилище и как работает
-* [Инструкция создания](#создайте-сервисный-аккаунт-в-яндексоблаке) сервисного аккаунта
-* [Начало работы](#как-с-этим-работать)
-* * [Загрузка файла](#загрузка-файла-в-бакет)
-* * * [Загрузка файлов](#загрузка-файлов-в-бакет) 
-* * [Получение списка директорий и файлов бакета](#получение-списка-директорий-и-файлов-бакета)
-* * [Скачивание файла из бакета](#получение-списка-директорий-и-файлов-бакета)
-* * [Удаление файла из бакета](#удаление-файла-из-бакета)
-* [Разработчик git@powerdot](https://github.com/powerdot/)
+		this.s3 = new AWS.S3({
+			endpoint: new AWS.Endpoint(new_params.endpoint_url),
+			accessKeyId: new_params.auth.accessKeyId,
+			secretAccessKey: new_params.auth.secretAccessKey,
+			region: new_params.region,
+			httpOptions: new_params.httpOptions
+		});
 
-Ссылка на описание официального API Яндекса.
-https://cloud.yandex.ru/docs/storage/s3/
+		this.debug = new_params.debug;
 
-Ссылка на описание S3 API Amazon (англ.)
-https://docs.aws.amazon.com/en_us/AmazonS3/latest/API/Welcome.html
-
-## Теория O'RLY
-
-Хранилище состоит из бакетов.
-Бакет (Bucket) - это, грубо говоря, ваш жесткий диск в интернетах.
-Чтобы загружать что-либо в Яндекс.Облако и хранить там свои файлы, вам нужно сделать этот самый бакет.
-
-У бакета есть ID. ID совпадает с его названием, которое вы придумаете, например **my-storage**.
-
-Доступ к бакету можно получить с помощью специального аккаунта, его называют **сервисный аккаунт**.
-
-От него есть логин и пароль, только логин и пароль называется **ключем**, а логин - это **"Идентификатор ключа"**, а пароль - это **"Секретный ключ"**. Не бойтесь, здесь все очень легко.
-
-И так, предположим вы уже сделали свой бакет (как его делать, я не рассказываю, там всё довольно просто). А может даже уже сделали папки внутри (кстати, это не обязательно).
-
-Время получить доступ для работ с бакетом!
-
-## Создайте сервисный аккаунт в Яндекс.Облаке
-
-1. Зайдите в ЛК
-https://console.cloud.yandex.ru/cloud
-
-2. В каталогах выберите нужный каталог в списке справа.
-
-3. В меню слева нажмите *Сервисные аккаунты*
-
-4. Справа сверху нажмите *Создать аккаунт*
-
-5. Придумайте название аккаунту, оно вам не понадобится. Добавьте роли: iam.serviceAccounts.user, editor. Сохраняйте.
-
-6. Нажмите на сервисный аккаунт, чтобы открыть его.
-
-7. Справа сверху нажмите "Создать новый ключ" -> "Создать клч доступа"
-
-8. Придумайте описание. Создавайте.
-
-9. У вас появилось окошко с 2мя ключами. Скопируйте их куда-нибудь, потому что секретный ключ выдается 1 раз в этой связке. Больше вы его не увидите.
-
-Теперь у вас есть **Идентификатор ключа** (accessKeyId) и **Секретный ключ** (secretAccessKey), поздравляю, от души.
-
-## Как с этим работать
-
-Установите npm-модуль в директории вашего проекта, это очень просто.
-```bash
-npm i easy-yandex-s3
-```
-
-### Инициализируем работу с бакетом.
-
-```javascript
-// Подключаем модуль
-var EasyYandexS3 = require("easy-yandex-s3");
-
-// Инициализация
-var s3 = new EasyYandexS3({
-    auth: {
-        accessKeyId: "ИДЕНТИФИКАТОР_КЛЮЧА",
-        secretAccessKey: "ДЛИННЫЙ_СЕКРЕТНЫЙ_КЛЮЧ",
-    },
-    Bucket: "НАЗВАНИЕ_БАКЕТА", // например, "my-storage",
-    debug: true // Дебаг в консоли, потом можете удалить в релизе
-});
-```
-
----------
-### Загрузка файла в бакет
-
-Общая конструкция:
-
-```javascript
-.Upload(
-    { параметры }, 
-    "папка/в/бакете"
-)
-```
-
-* Загрузка по расположению файла
-123.png -> [bucket-name]/test/07af8a67f6a4fa5f65a7f687a98fa6f2a34f.png
-
-```javascript
-var upload = await s3.Upload({
-    path: path.resolve(__dirname, "./123.png")
-},  "/test/" );
-console.log(upload);    // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
-                        // если вернулся false - произошла ошибка
-                        // Файл загрузится в [my-stogare]/test/{md5_сумма}.{расширение}
-```
-
-* Загрузка по расположению файла, с указанием оригинального имени и расширения файла
-123.png -> [bucket-name]/test/123.png
-
-```javascript
-var upload = await s3.Upload({
-    path: path.resolve(__dirname, "./123.png"),
-    save_name: true
-}, "/test/");
-console.log(upload);    // Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
-                        // если вернулся false - произошла ошибка
-                        // Файл загрузится в [my-stogare]/test/123.png
-```
-
-* Загрузка по расположению файла, с указанием имени файла для загрузки
-123.png -> [bucket-name]/test/lolkek.png
-
-```javascript
-var upload = await s3.Upload({
-    path: path.resolve(__dirname, "./123.png"),
-    name: "lolkek.png"
-}, "/test/");
-  console.log(upload);  // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
-                        // если вернулся false - произошла ошибка
-                        // Файл загрузится в [my-stogare]/test/lolkek.png
-```
+		this.Bucket = params.Bucket;
+	};
 
 
-* Загрузка буфера
-<Buffer> -> [bucket-name]/test/cad9c7a68dca57ca6dc9a7dc8a86c.png
+	_log(){
+		return console.log('[' + (new Date().toUTCString()) + '] ', ...arguments)
+	}
 
-```javascript
-var upload = await s3.Upload({
-    buffer: file_buffer
-}, "/test/");
-console.log(upload);    // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
-                        // если вернулся false - произошла ошибка
-                        // Файл загрузится в [my-stogare]/test/{md5_сумма}.{расширение}
-```
 
-* Загрузка буфера с определением имени и расширения файла
-<Buffer> -> [bucket-name]/test/lolkek.png
+	/**
+	 * Загрузка файла
+	 * @param {Object|Array<Object>} file Буфер файла и информация о расширении. Или путь к файлу.
+	 * @param {Buffer=} file.buffer Буфер файла
+	 * @param {String=} file.path Путь к файлу
+	 * @param {Boolean=} file.save_name Оставить оригинальное название файла. Работает только в случае передачи пути к файлу.
+	 * @param {String=} file.name Устаналивает название загружаемому файлу. Передавать с расширением.
+	 * 
+	 * 
+	 * @param {String} route Папка загрузки - бакет
+	 * 
+	 * @returns {Promise<Object>} Результат загрузки
+	 */
+	async Upload(file, route){
+		var file_body;
+		var file_ext;
+		var file_md5;
+		var file_upload_name;
 
-```javascript
-var upload = await s3.Upload({
-    buffer: file_buffer,
-    name: "lolkek.png"
-}, "/test/");
-console.log(upload);    // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
-                        // если вернулся false - произошла ошибка
-                        // Файл загрузится в [my-stogare]/test/lolkek.png
-```
+		var debug = this.debug;
+		var debug_object = "upload";
 
-**return:**
-```
-{ 
-  ETag: '"md5sum"',
-  VersionId: 'null',
-  Location:
-   'https://actid-storage.storage.yandexcloud.net/test1/name.png',
-  key: 'test1/name.png',
-  Key: 'test1/name.png',
-  Bucket: 'actid-storage' 
+		if(Array.isArray(file)){
+			let files = file;
+			if(files.length == 0) throw "file array is empty";
+			if(debug) this._log("S3", debug_object, 'array to upload:', files.length);
+			var u = await this._uploadArray(files, route);
+			if(debug) this._log("S3", debug_object, 'array upload done', u.length, 'files');
+			return u;
+		}
+
+		if(!fs.existsSync(file.path)) throw "file/directory on path is not found ("+file.path+")";
+		if(!route) throw "route (2nd argument) is not defined";
+
+		if(fs.lstatSync(file.path).isDirectory()){
+			var dir_path = path.resolve(file.path);
+			if(!fs.lstatSync(dir_path).isDirectory())  throw "directory on path is not found ("+dir_path+")";
+			if(debug) this._log("S3", debug_object, 'folder to upload found', file.path);
+			var u = await this._uploadDirectory(dir_path, file, route);
+			if(debug) this._log("S3", debug_object, 'folder upload done', u.length, 'files');
+			return u;
+		}
+	
+		if(file.path){
+			file_body = fs.readFileSync(file.path);
+			file_ext = path.extname(file.path);
+			if(file.save_name) file_upload_name = path.basename(file.path);
+			if(file.name) file_upload_name = file.name;
+		}else{
+			file_body = file.buffer;
+			file_ext = '.'+fileType(file_body).ext;
+			if(file.name) file_upload_name = file.name;
+		}
+	
+		if(route.slice(-1)!="/") route+="/";
+		if(route[0]=="/") route = route.slice(1);
+	
+		file_md5 = md5(file_body);
+		if(!file_upload_name) file_upload_name = `${file_md5}${file_ext}`;
+	
+		var upload_route = route;
+		var Key = `${upload_route}${file_upload_name}`;
+		var Body = file_body;
+		
+		var s3 = this.s3;
+		var Bucket = this.Bucket;
+		var params = {Bucket, Key, Body, ContentType: mime.lookup(file_upload_name)}
+
+		if(debug) this._log("S3", debug_object, "started");
+		if(debug) this._log("S3", debug_object, params);
+
+		try {
+			var s3Promise = await new Promise(function(resolve, reject) {
+				s3.upload(params, function(err, data) {
+					if (err) return reject(err);
+					return resolve(data);
+				});
+			});
+			if(debug) this._log("S3", debug_object, 'done:', s3Promise);
+			return s3Promise;
+		} catch (error) {
+			if(debug) this._log("S3", debug_object,'error:', error);
+			return false;
+		}
+	};
+
+
+	async _uploadDirectory(dir, params, route){
+		var debug = this.debug;
+		var debug_object = "_uploadDirectory";
+
+		var uploaded = [];
+		var threads = sliceArrayToThreads(readDir(dir), 1); // TODO params.threads
+
+		// TODO Threads
+		// var thread_id = uniqid();
+		// var new_threads = this.threads[thread_id];
+		// this.threads[thread_id] = {proccesses: [], results: [], callback: params.callback};
+
+		if(debug) this._log("S3", debug_object, "threads divided:", threads.length);
+
+		for(let thread_files of threads){
+			for(let file of thread_files){
+				params.path = file.full_file_path;
+				if(params.name) params.name = false;
+				if(params.save_name) params.name = file.file_name;
+				if(debug) this._log("S3", debug_object, "dir file uploading:", route, 'to', file.relative_dir_path);
+
+				// TODO Threads
+				// new_threads.proccesses.push(
+				// 	new Promise(async function(resolve, reject, new_threads) {
+				// 		var u = await this.Upload(params, path.resolve(route, file.relative_dir_path));
+				// 		new_threads.results.push(u);
+				// 		if(new_threads.proccesses.length == new_threads.results) new_threads.callback(new_threads.results);
+				// 	})
+				// );
+				var u = await this.Upload(params, path.resolve(route, file.relative_dir_path));
+				uploaded.push(u);
+			}
+		}
+		return uploaded;
+	}
+
+	async _uploadArray(array, route){
+		var debug = this.debug;
+		var debug_object = "_uploadArray";
+
+		var uploaded = [];
+
+		for(let file of array){
+			var u = await this.Upload(file, route);
+			uploaded.push(u);
+		}
+		return uploaded;
+	}
+
+
+	/**
+	 * Получение списка директорий и папок
+	 * @param {String=} route Необязательно. Путь к папке, которую смотрим
+	 * 
+	 * @returns {Promise<Object>} Результат просмотра
+	*/
+	async GetList(route){
+		if(route) route += route.slice(-1)!="/"?"/":"";
+		if(route[0]=="/") route = route.slice(1);
+
+		var s3 = this.s3;
+		var Bucket = this.Bucket;
+		var params = {
+			Bucket, 
+			Prefix: route, 
+			Delimiter: '/'
+		}
+
+		var debug = this.debug;
+		var debug_object = "listObjectsV2"
+		if(debug) this._log("S3", debug_object, "started");
+		if(debug) this._log("S3", debug_object, params);
+
+		try {
+			var s3Promise = await new Promise(function(resolve, reject) {
+				s3.listObjectsV2(params, function(err, data) {
+					if (err) return reject(err);
+					return resolve(data);
+				});
+			});
+			if(debug) this._log("S3", debug_object, 'done:', s3Promise);
+			return s3Promise;
+		} catch (error) {
+			if(debug) this._log("S3", debug_object,'error:', error);
+			return false;
+		}
+	}
+
+
+	/**
+	 * Скачивание файла
+	 * @param {String} route_full_path Полный путь до файла. С папками, с названием и расширением файла
+	 * @param {String=} destination_full_path Необязательно. Куда сохраняем файл. Абсолютный или относительный, с названием и расширением файла
+	 * 
+	 * @returns {Promise<Object>} Результат скачивания и сохранения
+	*/
+	async Download(route_full_path, destination_full_path){
+		if(route_full_path[0]=="/") route_full_path = route_full_path.slice(1);
+		if(!destination_full_path) destination_full_path = false;
+
+		var s3 = this.s3;
+		var Bucket = this.Bucket;
+		var Key = route_full_path;
+		var params = {
+			Bucket, 
+			Key
+		}
+
+		var debug = this.debug;
+		var debug_object = "getObject"
+		if(debug) this._log("S3", debug_object, "started");
+		if(debug) this._log("S3", debug_object, params);
+
+		try {
+			var s3Promise = await new Promise(function(resolve, reject) {
+				s3.getObject(params, function(err, data) {
+					if (err) return reject(err);
+					// data
+
+					var file_replaced = false;
+					if(destination_full_path){
+						var buffer = data.Body;
+						if(fs.existsSync(destination_full_path)) file_replaced = true;
+						fs.writeFileSync(destination_full_path, buffer);
+					}
+
+					return resolve({
+						data,
+						destination_full_path,
+						file_replaced
+					});
+				});
+			});
+			if(debug) this._log("S3", debug_object, 'done:', s3Promise);
+			return s3Promise;
+		} catch (error) {
+			if(debug) this._log("S3", debug_object,'error:', error);
+			return false;
+		}
+	}
+
+
+	/**
+	 * Удаление файла из хранилища
+	 * @param {String} route_full_path Полный путь до файла. С папками, с названием и расширением файла
+	 * 
+	 * @returns {Promise<Object>} Результат удаления
+	*/
+	async Remove(route_full_path){
+		if(route_full_path[0]=="/") route_full_path = route_full_path.slice(1);
+
+		var s3 = this.s3;
+		var Bucket = this.Bucket;
+		var Key = route_full_path;
+		var params = {Bucket, Key};
+
+		var debug = this.debug;
+		var debug_object = "deleteObject"
+		if(debug) this._log("S3", debug_object, "started");
+		if(debug) this._log("S3", debug_object, params);
+
+		try {
+			var s3Promise = await new Promise(function(resolve, reject) {
+				s3.deleteObject(params, function(err, data) {
+					if (err) return reject(err);
+					return resolve(true);
+				});
+			});
+			if(debug) this._log("S3", debug_object, 'done:', s3Promise);
+			return s3Promise;
+		} catch (error) {
+			if(debug) this._log("S3", debug_object,'error:', error);
+			return false;
+		}
+	}
 }
-```
-
-#### Загрузка файлов в бакет
-
-* Загружаем контент папки в бакет
-контент папки -> [bucket]/folder_on_server/
-
-Модуль берет все файлы и папки внутри указанной папки. **То есть саму папку он не загрузит, а только ее контент.**
-
-Представим себе папку `./my_folder`:
-
-- my_folder
-- - 1.png
-- - 2.png
-- - folder_inside
-- - - 3.png
-
-Устанавливаем параметр ` route ` как "**folder_on_server**", грубо говоря, это ` [my_bucket]/folder_on_server/ `
-То загрузка на бакет будет следующей:
-
-`
-[my_bucket]/folder_on_server/1.png 
-`
-`
-[my_bucket]/folder_on_server/2.png 
-`
-`
-[my_bucket]/folder_on_server/folder_inside/3.png 
-`
-
-Грубо говоря, мы просто телепортируем контент указанный папки в указанную папку на сервере. 
-Ребят, это просто CMD+C CMD+V.
-
-```javascript
-// Относительный путь:
-var upload = await s3.Upload({
-    path: "./my_folder",  // относительный путь до папки
-    save_name: true // сохранять оригинальные названия файлов 
-}, "/folder_on_server/");
-console.log(upload);    // <- массив загруженных файлов
-```
-
-```javascript
-// Прямой путь:
-var upload = await s3.Upload({
-    path: "/Users/powerdot/sites/example.com/", // прямой путь до папки
-    save_name: true // сохранять оригинальные названия файлов 
-}, "/folder_on_server/");
-console.log(upload);    // <- массив загруженных файлов
-```
-
-* Загрузка нескольких файлов
-массив файлов -> [bucket]/folder_on_server/
-
-```javascript
-// используем массив файлов следующим образом:
-var upload = await s3.Upload([
-    {path:"./file1.jpg", save_name: true}, // относительный путь до файла с сохранением имени
-    {path:"/Users/powerodt/dev/sites/folder/file2.css"}, // прямой путь до файла с изменением имени на md5-сумму
-    {path:"./file.html", name: 'index.html'}, // относительный путь на файл с изменением имени при загрузке на index.html
-], "/folder_on_server/");
-```
 
 
-**return:**
-Массив из Upload-объектов
-```
-[
-    { 
-        ETag: '"md5sum"',
-        VersionId: 'null',
-        Location:
-            'https://actid-storage.storage.yandexcloud.net/test1/name.png',
-        key: 'test1/name.png',
-        Key: 'test1/name.png',
-        Bucket: 'actid-storage' 
-    }, 
-...]
-```
+/**
+ * Получение массива всех вложенных файлов и папок и их файлов и папок и их файлов и папок...
+ * @param {String} dir_path Путь до папки, которую сканируем
+ * @param {String=} original_file_path 
+ */
+function readDir(dir_path, original_file_path){
+    if(!original_file_path) original_file_path = dir_path;
+    var dir_files = fs.readdirSync(dir_path);
+    var paths = [];
+    for(var file_name of dir_files){
+        var full_file_path = path.resolve(dir_path, file_name);
+        var relative_file_path = full_file_path.replace(original_file_path+'/', '');
+        var relative_dir_path = relative_file_path.replace(file_name, '');
+        if(fs.lstatSync(full_file_path).isDirectory()){
+            paths.push(...readDir(full_file_path, original_file_path));
+            continue;
+        }
+        paths.push({full_file_path, relative_dir_path, file_name});
+        // console.log(full_file_path,'|',relative_dir_path,'|', file_name);
+    }
+    return paths;
+}
 
 
+/**
+ * Разделение массива на n- массивов. В зависимости от аргумента threads (n). Спасибо, Stackoverflow.
+ * https://stackoverflow.com/questions/41964628/slice-array-into-an-array-of-arrays
+ * @param {Array} arr Массив
+ * @param {Number} threads Потоки
+ */
+function sliceArrayToThreads(arr, threads) {
+	if(!threads) threads = 1;
+	if(threads <= 0) threads = 1;
+	var size = arr.length / threads;
+	var step = 0, sliceArr = [], len = arr.length;
+  	while (step < len) {
+		sliceArr.push(arr.slice(step, step += size));
+	}
+  	return sliceArr;
+}
 
-### Получение списка директорий и файлов бакета
-
-Общая конструкция:
-
-```javascript
-.GetList(
-    "директория/бакета"
-);
-```
-
-* Получение корня бакета
-
-```javascript
-var list = await s3.GetList();
-```
-
-* Получение списка директорий и файлов из конкретной директории
-
-```javascript
-var list = await s3.GetList("/test/");
-```
-
-**return:**
-```
-{ IsTruncated: false,
-  Contents:
-   [ { Key: 'test/',
-       LastModified: 2019-07-08T13:52:57.000Z,
-       ETag: '"md5sum"',
-       Size: 0,
-       StorageClass: 'STANDARD' },
-     { Key: 'test/name.png',
-       LastModified: 2019-07-15T22:10:09.000Z,
-       ETag: '"md5sum"',
-       Size: 20705,
-       StorageClass: 'STANDARD' },],
-  Name: 'testbucket',
-  Prefix: 'test/',
-  Delimiter: '/',
-  MaxKeys: 1000,
-  CommonPrefixes: [],
-  KeyCount: 5 }
-```
-
-### Скачивание файла из бакета
-
-Общая конструкция:
-
-```javascript
-.Download(
-    "путь/до/файла/в/бакете",
-    "путь/куда/сохраняем/на/клиенте"
-);
-```
-
-* Скачивание файла и получение буфера этого файла
-
-```javascript
-var download = await s3.Download( 'test/123.png' );
-```
-
-* Скачивание файла и сохранение его в файл 
-
-```javascript
-var download = await s3.Download( 'test/123.png', './myfile.png' );
-  
-// в download так же дополнительно вернется Buffer
-// а полученный файл с бакета будет сохранен как myfile.png в директории выполнения скрипта
-```
-
-**return:**
-```
-{ data:
-   { AcceptRanges: 'bytes',
-     LastModified: 2019-07-15T22:10:09.000Z,
-     ContentLength: 20705,
-     ETag: '"md5sum"',
-     ContentType: 'application/octet-stream',
-     Metadata: {},
-     Body:
-      <Buffer 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52 00 00 06 42 00 00 09 60 08 03 00 00 00 e3 c3 db 77 00 00 00 04 67 41 4d 41 00 00 b1 8f 0b fc 61 05 00 ... > },
-  destination_full_path: false,
-  file_replaced: false }
-```
-
-### Удаление файла из бакета
-
-Общая конструкция:
-
-```javascript
-.Remove(
-    "/путь до файла в бакете/"
-);
-```
-
-* Удаляем файл
-
-
-```javascript
-var remove = await s3.Remove( 'test/123.png' );
-
-// возвращается true или false.
-// true при успешном удалении, даже если файла нет
-// false при других критических ошибках
-```
-
-**return:**
-```
-true
-```
+module.exports = EasyYandexS3;
