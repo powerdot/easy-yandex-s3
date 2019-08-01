@@ -56,18 +56,19 @@ npm i easy-yandex-s3
 ```
 
 ### Инициализируем работу с бакетом.
+
 ```javascript
 // Подключаем модуль
 var EasyYandexS3 = require("easy-yandex-s3");
 
 // Инициализация
 var s3 = new EasyYandexS3({
-		auth: {
-			accessKeyId: "ИДЕНТИФИКАТОР_КЛЮЧА",
-			secretAccessKey: "ДЛИННЫЙ_СЕКРЕТНЫЙ_КЛЮЧ",
-		},
-		Bucket: "НАЗВАНИЕ_БАКЕТА", // например, "my-storage",
-        debug: true // Дебаг в консоли, потом можете удалить в релизе
+    auth: {
+		accessKeyId: "ИДЕНТИФИКАТОР_КЛЮЧА",
+		secretAccessKey: "ДЛИННЫЙ_СЕКРЕТНЫЙ_КЛЮЧ",
+	},
+	Bucket: "НАЗВАНИЕ_БАКЕТА", // например, "my-storage",
+    debug: true // Дебаг в консоли, потом можете удалить в релизе
 });
 ```
 
