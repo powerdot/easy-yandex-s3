@@ -148,7 +148,7 @@ console.log(upload);    // <- Возвращает путь к файлу в х�
 ```
 
 **return:**
-```json
+```
 { 
   ETag: '"md5sum"',
   VersionId: 'null',
@@ -183,7 +183,7 @@ var list = await s3.GetList("/test/");
 ```
 
 **return:**
-```json
+```
 { IsTruncated: false,
   Contents:
    [ { Key: 'test/',
@@ -231,7 +231,7 @@ var download = await s3.Download( 'test/123.png', './myfile.png' );
 ```
 
 **return:**
-```json
+```
 { data:
    { AcceptRanges: 'bytes',
      LastModified: 2019-07-15T22:10:09.000Z,
@@ -267,6 +267,6 @@ var remove = await s3.Remove( 'test/123.png' );
 ```
 
 **return:**
-```json
+```
 true
 ```
