@@ -9,7 +9,7 @@ var s3 = new EYS3({
 		secretAccessKey: process.env.SECRET,
     },
     Bucket: process.env.BUCKET,
-    debug: false
+    debug: true
 });
 
 describe("Upload", function(){
