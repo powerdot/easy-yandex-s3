@@ -3,6 +3,7 @@ var md5 = require("md5");
 var fs = require("fs");
 var path = require("path");
 const fileType = require('file-type');
+var mime = require('mime-types');
 
 /**
  * Создание объекта для работы с S3 хранилищем
@@ -98,7 +99,7 @@ class EasyYandexS3 {
 		
 		var s3 = this.s3;
 		var Bucket = this.Bucket;
-		var params = {Bucket, Key, Body}
+		var params = {Bucket, Key, Body, ContentType: mime.lookup(file_upload_name)}
 
 		var debug = this.debug;
 		var debug_object = "upload"

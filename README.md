@@ -1,4 +1,4 @@
-# easy-yandex-s3
+[![Easy Yandex S3 Logo](https://storage.yandexcloud.net/actid-storage/easy-yandex-s3/eys3.png)](https://github.com/powerdot/easy-yandex-s3)
 
 Использовать S3 API Яндекс.Облака еще проще.
 Хранилище называется у них там Object Storage.
@@ -67,113 +67,206 @@ var s3 = new EasyYandexS3({
 			secretAccessKey: "ДЛИННЫЙ_СЕКРЕТНЫЙ_КЛЮЧ",
 		},
 		Bucket: "НАЗВАНИЕ_БАКЕТА", // например, "my-storage",
-    		debug: true // Дебаг в консоли, потом можете удалить в релизе
+        debug: true // Дебаг в консоли, потом можете удалить в релизе
 });
 ```
 
+---------
 ### Загрузка файла в бакет
 
-.Upload(***{параметры}***, ***"/папка в бакете/"***)
+Общая конструкция:
 
-Загрузка по расположению файла
 ```javascript
-  var upload = await s3.Upload({path: path.resolve(__dirname, "./123.png")}, "/test/");
-  console.log(upload);  // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
+.Upload(
+    { параметры }, 
+    "папка/в/бакете"
+)
+```
+
+* Загрузка по расположению файла
+123.png -> [bucket-name]/test/07af8a67f6a4fa5f65a7f687a98fa6f2a34f.png
+
+```javascript
+var upload = await s3.Upload({
+    path: path.resolve(__dirname, "./123.png")
+},  "/test/" );
+console.log(upload);    // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
                         // если вернулся false - произошла ошибка
-                        
                         // Файл загрузится в [my-stogare]/test/{md5_сумма}.{расширение}
 ```
 
-Загрузка по расположению файла, с указанием оригинального имени и расширения файла
+* Загрузка по расположению файла, с указанием оригинального имени и расширения файла
+123.png -> [bucket-name]/test/123.png
+
 ```javascript
   var upload = await s3.Upload({
-                                  path: path.resolve(__dirname, "./123.png"),
-                                  save_name: true
-                               }, "/test/");
-  console.log(upload);  // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
+    path: path.resolve(__dirname, "./123.png"),
+    save_name: true
+}, "/test/");
+console.log(upload);    // Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
                         // если вернулся false - произошла ошибка
-                        
                         // Файл загрузится в [my-stogare]/test/123.png
 ```
 
-Загрузка по расположению файла, с указанием имени файла для загрузки
+* Загрузка по расположению файла, с указанием имени файла для загрузки
+123.png -> [bucket-name]/test/lolkek.png
+
 ```javascript
-  var upload = await s3.Upload({
-                                  path: path.resolve(__dirname, "./123.png"),
-                                  name: "lolkek.png"
-                               }, "/test/");
+ var upload = await s3.Upload({
+    path: path.resolve(__dirname, "./123.png"),
+    name: "lolkek.png"
+}, "/test/");
   console.log(upload);  // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
                         // если вернулся false - произошла ошибка
-                        
                         // Файл загрузится в [my-stogare]/test/lolkek.png
 ```
 
 
-Загрузка буфера
+* Загрузка буфера
+<Buffer> -> [bucket-name]/test/cad9c7a68dca57ca6dc9a7dc8a86c.png
+
 ```javascript
-  var upload = await s3.Upload({
-                                  buffer: file_buffer
-                               }, "/test/");
-  console.log(upload);  // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
+var upload = await s3.Upload({
+    buffer: file_buffer
+}, "/test/");
+console.log(upload);    // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
                         // если вернулся false - произошла ошибка
-                        
                         // Файл загрузится в [my-stogare]/test/{md5_сумма}.{расширение}
 ```
 
-Загрузка буфера с определением имени и расширения файла
+* Загрузка буфера с определением имени и расширения файла
+<Buffer> -> [bucket-name]/test/lolkek.png
+
 ```javascript
-  var upload = await s3.Upload({
-                                  buffer: file_buffer,
-                                  name: "lolkek.png"
-                               }, "/test/");
-  console.log(upload);  // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
+var upload = await s3.Upload({
+    buffer: file_buffer,
+    name: "lolkek.png"
+}, "/test/");
+console.log(upload);    // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
                         // если вернулся false - произошла ошибка
-                        
                         // Файл загрузится в [my-stogare]/test/lolkek.png
+```
+
+**return:**
+```json
+{ 
+  ETag: '"md5sum"',
+  VersionId: 'null',
+  Location:
+   'https://actid-storage.storage.yandexcloud.net/test1/name.png',
+  key: 'test1/name.png',
+  Key: 'test1/name.png',
+  Bucket: 'actid-storage' 
+}
 ```
 
 ### Получение списка директорий и файлов бакета
 
-.GetList(***"/директория бакета/"***)
+Общая конструкция:
 
-Получение корня бакета
 ```javascript
-  var list = await s3.GetList();
+.GetList(
+    "директория/бакета"
+);
 ```
 
-Получение списка директорий и файлов из конкретной директории
+* Получение корня бакета
+
 ```javascript
-  var list = await s3.GetList("/test/");
+var list = await s3.GetList();
+```
+
+* Получение списка директорий и файлов из конкретной директории
+
+```javascript
+var list = await s3.GetList("/test/");
+```
+
+**return:**
+```json
+{ IsTruncated: false,
+  Contents:
+   [ { Key: 'test/',
+       LastModified: 2019-07-08T13:52:57.000Z,
+       ETag: '"md5sum"',
+       Size: 0,
+       StorageClass: 'STANDARD' },
+     { Key: 'test/name.png',
+       LastModified: 2019-07-15T22:10:09.000Z,
+       ETag: '"md5sum"',
+       Size: 20705,
+       StorageClass: 'STANDARD' },],
+  Name: 'testbucket',
+  Prefix: 'test/',
+  Delimiter: '/',
+  MaxKeys: 1000,
+  CommonPrefixes: [],
+  KeyCount: 5 }
 ```
 
 ### Скачивание файла из бакета
 
-.Download(***"/путь до файла в бакете/"***, ***"/путь куда сохраняем на клиенте/"***)
+Общая конструкция:
 
-Скачивание файла и возвращение буфера этого файла
 ```javascript
-  var download = await s3.Download('test/123.png');
+.Download(
+    "путь/до/файла/в/бакете",
+    "путь/куда/сохраняем/на/клиенте"
+);
 ```
 
+* Скачивание файла и получение буфера этого файла
 
-Скачивание файла и сохранение его в файл 
 ```javascript
-  var download = await s3.Download('test/123.png', './myfile.png');
+var download = await s3.Download( 'test/123.png' );
+```
+
+* Скачивание файла и сохранение его в файл 
+
+```javascript
+var download = await s3.Download( 'test/123.png', './myfile.png' );
   
-  // в download так же дополнительно вернется Buffer
-  // а полученный файл с бакета будет сохранен как myfile.png в директории выполнения скрипта
+// в download так же дополнительно вернется Buffer
+// а полученный файл с бакета будет сохранен как myfile.png в директории выполнения скрипта
 ```
 
+**return:**
+```json
+{ data:
+   { AcceptRanges: 'bytes',
+     LastModified: 2019-07-15T22:10:09.000Z,
+     ContentLength: 20705,
+     ETag: '"md5sum"',
+     ContentType: 'application/octet-stream',
+     Metadata: {},
+     Body:
+      <Buffer 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52 00 00 06 42 00 00 09 60 08 03 00 00 00 e3 c3 db 77 00 00 00 04 67 41 4d 41 00 00 b1 8f 0b fc 61 05 00 ... > },
+  destination_full_path: false,
+  file_replaced: false }
+```
 
 ### Удаление файла из бакета
 
-.Remove(***"/путь до файла в бакете/"***)
+Общая конструкция:
 
-Удаляем файл
 ```javascript
-  var remove = await s3.Remove('test/123.png');
+.Remove(
+    "/путь до файла в бакете/"
+);
+```
 
-  // возвращается true или false.
-  // true при успешном удалении, даже если файла нет
-  // false при других критических ошибках
+* Удаляем файл
+
+
+```javascript
+var remove = await s3.Remove( 'test/123.png' );
+
+// возвращается true или false.
+// true при успешном удалении, даже если файла нет
+// false при других критических ошибках
+```
+
+**return:**
+```json
+true
 ```
