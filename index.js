@@ -94,20 +94,22 @@ class EasyYandexS3 {
 			return u;
 		}
 
-		file.path = path.resolve(file.path);
+		if(file.path){
+			file.path = path.resolve(file.path);
 
-		if(!fs.existsSync(file.path)) throw "file/directory on path is not found ("+file.path+")";
-		if(!route) throw "route (2nd argument) is not defined";
-
-		if(fs.lstatSync(file.path).isDirectory()){
-			var dir_path = file.path;
-			if(!fs.lstatSync(dir_path).isDirectory())  throw "directory on path is not found ("+dir_path+")";
-			if(debug) this._log("S3", debug_object, 'folder to upload found', file.path);
-			if(!file.ignore) file.ignore = [];
-			var ignore_list = [...this.default_ignore_list, ...file.ignore]
-			var u = await this._uploadDirectory(dir_path, file, route, ignore_list);
-			if(debug) this._log("S3", debug_object, 'folder upload done', u.length, 'files');
-			return u;
+			if(!fs.existsSync(file.path)) throw "file/directory on path is not found ("+file.path+")";
+			if(!route) throw "route (2nd argument) is not defined";
+	
+			if(fs.lstatSync(file.path).isDirectory()){
+				var dir_path = file.path;
+				if(!fs.lstatSync(dir_path).isDirectory())  throw "directory on path is not found ("+dir_path+")";
+				if(debug) this._log("S3", debug_object, 'folder to upload found', file.path);
+				if(!file.ignore) file.ignore = [];
+				var ignore_list = [...this.default_ignore_list, ...file.ignore]
+				var u = await this._uploadDirectory(dir_path, file, route, ignore_list);
+				if(debug) this._log("S3", debug_object, 'folder upload done', u.length, 'files');
+				return u;
+			}
 		}
 	
 		if(file.path){
