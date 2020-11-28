@@ -217,7 +217,10 @@ class EasyYandexS3 {
 	 * @returns {Promise<Object>} Результат просмотра
 	*/
 	async GetList(route){
+		if(!route) route = '/';
+		if(route == './') route = '/';
 		if(route) route += route.slice(-1)!="/"?"/":"";
+		if(route[0]==".") route = route.slice(1);
 		if(route[0]=="/") route = route.slice(1);
 
 		var s3 = this.s3;

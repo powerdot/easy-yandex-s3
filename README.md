@@ -27,6 +27,8 @@
 * * [Получение списка директорий и файлов бакета](#получение-списка-директорий-и-файлов-бакета)
 * * [Скачивание файла из бакета](#получение-списка-директорий-и-файлов-бакета)
 * * [Удаление файла из бакета](#удаление-файла-из-бакета)
+* [Примеры использования](#примеры-использования)
+** [Загрузка с multer](#multer-и-express)
 * [Разработчик git@powerdot](https://github.com/powerdot/)
 
 Ссылка на описание официального API Яндекса.  
@@ -386,4 +388,49 @@ var remove = await s3.Remove( 'test/123.png' );
 **return:**
 ```
 true
+```
+
+## Примеры использования
+
+### Multer и Express
+
+Пример загрузки файлов через multer и express.  
+Кейс: нужно загрузить файл с фронта на сервер, а потом загрузить его на Yandex Object Storage.
+
+* Устанавливаешь multer
+```bash
+npm i express
+npm i multer
+```
+
+* В файле проекта привзяываешь multer и easy-yandex-s3
+```javascript
+// Создаем веб-сервер
+var express = require("express");
+var app = express();
+app.listen(8000)
+
+// Подключаем multer и eys3
+var multer = require("multer");
+var EasyYandexS3 = require("easy-yandex-s3");
+
+// Указываем аутентификацию в Yandex Object Storage
+var s3 = new EasyYandexS3({
+    auth: {
+        accessKeyId: "",
+        secretAccessKey: "",
+    },
+    Bucket: "my-storage", // Название бакета
+    debug: false // Дебаг в консоли
+});
+
+// Подключаешь мидлвар multer для чтения загруженных файлов
+app.use(multer().any());
+
+// Делаешь фетч post-запроса с отправленным файлом по ссылке /uploadFile
+app.post('/uploadFile', async(req,res)=>{
+    let buffer = req.files[0].buffer; // Буфер загруженного файла
+    var upload = await s3.Upload({buffer}, '/files/'); // Загрузка в бакет
+    res.send(upload); // Ответ сервера - ответ от Yandex Object Storage
+});
 ```
