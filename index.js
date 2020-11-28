@@ -120,7 +120,7 @@ class EasyYandexS3 {
 		}else{
 			file_body = file.buffer;
 			try {
-				file_ext = '.'+fileType(file_body).ext;
+				file_ext = '.' + fileExt(file);
 			} catch (error) {
 				if (debug) this._log("S3", debug_object,'error:', error);
 			}
@@ -368,6 +368,27 @@ function readDir(dir_path, original_file_path, ignore_list){
 	// console.log(paths);
     return paths;
 }
+
+/**
+ * Расширенное определение расширения файла
+ * https://github.com/powerdot/easy-yandex-s3/commit/8e5f3e42a5dffe6e54ceef16288e5a9c00868838
+ * @param {*} file 
+ */
+function fileExt(file) {
+	if(file.mimetype){
+		switch(file.mimetype) {
+			case "text/plain": return "txt";
+			case "application/msword": return "doc";
+			case "application/vnd.ms-excel": return "xls";
+			case "text/csv": return "csv";
+			default: return fileType(file.buffer).ext;
+		};
+	}else{
+		if(file.buffer) return fileType(file.buffer).ext;
+	}
+
+	return "";
+};
 
 
 /**

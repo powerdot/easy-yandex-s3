@@ -1,6 +1,7 @@
 const expect = require("chai").expect;
 const EYS3 = require("../index.js");
 const path = require("path");
+const fs = require("fs");
 require('dotenv').config();
 
 var s3 = new EYS3({
@@ -22,6 +23,12 @@ describe("Upload", function(){
 
     it("file with relative path with new name", async function(){
         var u = await s3.Upload({path: "./test/file.rtf", name: 'test.rtf'}, "/eys3-testing/");
+        expect(u).to.not.equal(false);
+    });
+
+    it("upload by file buffer", async function(){
+        let buffer = fs.readFileSync("./test/folder/file1.rtf");
+        var u = await s3.Upload({buffer}, "/eys3-testing/");
         expect(u).to.not.equal(false);
     });
 
