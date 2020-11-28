@@ -397,7 +397,7 @@ true
 Пример загрузки файлов через multer и express.  
 Кейс: нужно загрузить файл с фронта на сервер, а потом загрузить его на Yandex Object Storage.
 
-* Устанавливаешь multer
+* Устанавливаешь express и multer
 ```bash
 npm i express
 npm i multer
