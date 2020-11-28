@@ -403,7 +403,7 @@ npm i express
 npm i multer
 ```
 
-* В файле проекта привзяываешь multer и easy-yandex-s3
+* В файле проекта привязываешь multer и easy-yandex-s3
 ```javascript
 // Создаем веб-сервер
 var express = require("express");
