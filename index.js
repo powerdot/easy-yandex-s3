@@ -139,7 +139,7 @@ class EasyYandexS3 {
 		
 		var s3 = this.s3;
 		var Bucket = this.Bucket;
-		var ContentType = ContentType: mime.lookup(file_upload_name) || "text/plain";
+		var ContentType = mime.lookup(file_upload_name) || "text/plain";
 		var params = {Bucket, Key, Body, ContentType}
 
 		if(debug) this._log("S3", debug_object, "started");
