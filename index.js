@@ -95,7 +95,7 @@ class EasyYandexS3 {
 		}
 
 		if(file.path){
-			file.path = path.resolve(file.path);
+			file.path = path.join(file.path);
 
 			if(!fs.existsSync(file.path)) throw "file/directory on path is not found ("+file.path+")";
 			if(!route) throw "route (2nd argument) is not defined";
@@ -190,7 +190,7 @@ class EasyYandexS3 {
 				// 		if(new_threads.proccesses.length == new_threads.results) new_threads.callback(new_threads.results);
 				// 	})
 				// );
-				var u = await this.Upload(params, path.resolve(route, file.relative_dir_path));
+				var u = await this.Upload(params, path.join(route, file.relative_dir_path));
 				uploaded.push(u);
 			}
 		}
@@ -353,7 +353,7 @@ function readDir(dir_path, original_file_path, ignore_list){
     var dir_files = fs.readdirSync(dir_path);
     var paths = [];
     for(var file_name of dir_files){
-        var full_file_path = path.resolve(dir_path, file_name);
+        var full_file_path = path.join(dir_path, file_name);
         var relative_file_path = full_file_path.replace(original_file_path, '');
 		var relative_dir_path = relative_file_path.replace(file_name, '');
 		
