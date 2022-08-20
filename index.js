@@ -340,98 +340,98 @@ class EasyYandexS3 {
 		}
 	}
 
-  /**
-   * Удаление всех файлов с бакета
-   * @returns {Promise<Object>} Результат удаления
-   */
-  async CleanUp() {
-    var Bucket = this.Bucket;
-    var s3 = this.s3;
+	/**
+	 * Удаление всех файлов с бакета
+	 * @returns {Promise<Object>} Результат удаления
+	 */
+	async CleanUp() {
+		var Bucket = this.Bucket;
+		var s3 = this.s3;
 
-    var debug = this.debug;
-    var debug_object = "deleteObjects";
-    if (debug) this._log("S3", debug_object, "started");
-    if (debug) this._log("S3", debug_object, { Bucket });
+		var debug = this.debug;
+		var debug_object = "deleteObjects";
+		if (debug) this._log("S3", debug_object, "started");
+		if (debug) this._log("S3", debug_object, { Bucket });
 
-    var objects;
+		var objects;
 
-    try {
-      objects = await this._getAllObjects();
-    } catch (error) {
-      if (debug) this._log("S3", debug_object, "error:", error);
-      return false;
-    }
+		try {
+			objects = await this._getAllObjects();
+		} catch (error) {
+			if (debug) this._log("S3", debug_object, "error:", error);
+			return false;
+		}
 
-    var s3Promises = [];
-    var chunk = [];
+		var s3Promises = [];
+		var chunk = [];
 
-    for (var i = 1; i <= objects.length; i++) {
-      var index = i - 1;
+		for (var i = 1; i <= objects.length; i++) {
+			var index = i - 1;
 
-      chunk.push({ Key: objects[index].Key });
+			chunk.push({ Key: objects[index].Key });
 
-      if (i % 1000 === 0 || i === objects.length) {
-        var params = {
-          Bucket,
-          Delete: {
-            Objects: chunk.slice(),
-            Quiet: !debug,
-          },
-        };
+			if (i % 1000 === 0 || i === objects.length) {
+				var params = {
+					Bucket,
+					Delete: {
+						Objects: chunk.slice(),
+						Quiet: !debug,
+					},
+				};
 
-        var s3Promise = new Promise(function (resolve, reject) {
-          s3.deleteObjects(params, function (err, data) {
-            if (err) return reject(err);
-            return resolve(data);
-          });
-        });
+				var s3Promise = new Promise(function (resolve, reject) {
+					s3.deleteObjects(params, function (err, data) {
+						if (err) return reject(err);
+						return resolve(data);
+					});
+				});
 
-        s3Promises.push(s3Promise);
-        chunk = [];
-      }
-    }
+				s3Promises.push(s3Promise);
+				chunk = [];
+			}
+		}
 
-    try {
-      s3Promise = await Promise.all(s3Promises);
-      if (debug) this._log("S3", debug_object, "done:", s3Promise);
-      return s3Promise;
-    } catch (error) {
-      if (debug) this._log("S3", debug_object, "error:", error);
-      return false;
-    }
-  }
+		try {
+			s3Promise = await Promise.all(s3Promises);
+			if (debug) this._log("S3", debug_object, "done:", s3Promise);
+			return s3Promise;
+		} catch (error) {
+			if (debug) this._log("S3", debug_object, "error:", error);
+			return false;
+		}
+	}
 
 	async _getAllObjects() {
-    var objects = [];
+		var objects = [];
 
-    var helper = async (token) => {
-      var Bucket = this.Bucket;
-      var s3 = this.s3;
-      var params = {
-        Bucket
-      };
+		var helper = async (token) => {
+			var Bucket = this.Bucket;
+			var s3 = this.s3;
+			var params = {
+				Bucket
+			};
 
-      if (token) params.ContinuationToken = token;
+			if (token) params.ContinuationToken = token;
 
-      await new Promise(function (resolve, reject) {
-        s3.listObjectsV2(params, async function (err, data) {
-          if (err) return reject(err);
+			await new Promise(function (resolve, reject) {
+				s3.listObjectsV2(params, async function (err, data) {
+					if (err) return reject(err);
 
-          objects = objects.concat(data.Contents);
+					objects = objects.concat(data.Contents);
 
-          if (data.IsTruncated) {
-            await helper(data.NextContinuationToken);
-          }
+					if (data.IsTruncated) {
+						await helper(data.NextContinuationToken);
+					}
 
-          return resolve();
-        });
-      });
-    };
+					return resolve();
+				});
+			});
+		};
 
-    await helper();
+		await helper();
 
-    return objects;
-  }
+		return objects;
+	}
 }
 
 
