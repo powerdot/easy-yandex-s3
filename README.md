@@ -179,7 +179,7 @@ console.log(upload);    // <- Возвращает путь к файлу в х�
 ```
 
 **return:**
-```
+```javascript
 { 
   ETag: '"md5sum"',
   VersionId: 'null',
@@ -265,7 +265,7 @@ var upload = await s3.Upload([
 
 **return:**  
 Массив из Upload-объектов  
-```
+```javascript
 [
     { 
         ETag: '"md5sum"',
@@ -276,7 +276,8 @@ var upload = await s3.Upload([
         Key: 'test1/name.png',
         Bucket: 'actid-storage' 
     }, 
-...]
+    ...
+]
 ```
 
 
@@ -304,25 +305,32 @@ var list = await s3.GetList("/test/");
 ```
 
 **return:**  
-```
-{ IsTruncated: false,
-  Contents:
-   [ { Key: 'test/',
-       LastModified: 2019-07-08T13:52:57.000Z,
-       ETag: '"md5sum"',
-       Size: 0,
-       StorageClass: 'STANDARD' },
-     { Key: 'test/name.png',
-       LastModified: 2019-07-15T22:10:09.000Z,
-       ETag: '"md5sum"',
-       Size: 20705,
-       StorageClass: 'STANDARD' },],
-  Name: 'testbucket',
-  Prefix: 'test/',
-  Delimiter: '/',
+```javascript
+{
+  IsTruncated: false,
+  Contents: [
+    {
+      Key: "test/",
+      LastModified: new Date("2019-07-08T13:52:57.000Z"),
+      ETag: '"md5sum"',
+      Size: 0,
+      StorageClass: "STANDARD",
+    },
+    {
+      Key: "test/name.png",
+      LastModified: new Date("2019-07-15T22:10:09.000Z"),
+      ETag: '"md5sum"',
+      Size: 20705,
+      StorageClass: "STANDARD",
+    },
+  ],
+  Name: "testbucket",
+  Prefix: "test/",
+  Delimiter: "/",
   MaxKeys: 1000,
   CommonPrefixes: [],
-  KeyCount: 5 }
+  KeyCount: 5,
+}
 ```
 
 ### Скачивание файла из бакета
@@ -352,18 +360,20 @@ var download = await s3.Download( 'test/123.png', './myfile.png' );
 ```
 
 **return:**  
-```
-{ data:
-   { AcceptRanges: 'bytes',
-     LastModified: 2019-07-15T22:10:09.000Z,
-     ContentLength: 20705,
-     ETag: '"md5sum"',
-     ContentType: 'application/octet-stream',
-     Metadata: {},
-     Body:
-      <Buffer 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52 00 00 06 42 00 00 09 60 08 03 00 00 00 e3 c3 db 77 00 00 00 04 67 41 4d 41 00 00 b1 8f 0b fc 61 05 00 ... > },
+```javascript
+{
+  data: {
+    AcceptRanges: "bytes",
+    LastModified: new Date("2019-07-15T22:10:09.000Z"),
+    ContentLength: 20705,
+    ETag: '"md5sum"',
+    ContentType: "application/octet-stream",
+    Metadata: {},
+    Body: Buffer.from("250001000192CD0000002F6D6E742F72", "hex"),
+  },
   destination_full_path: false,
-  file_replaced: false }
+  file_replaced: false,
+};
 ```
 
 ### Удаление файла из бакета
@@ -388,7 +398,7 @@ var remove = await s3.Remove( 'test/123.png' );
 ```
 
 **return:**
-```
+```javascript
 true
 ```
 
