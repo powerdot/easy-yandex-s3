@@ -4,7 +4,7 @@
   "description": "Use Yandex S3 API to upload, list, download and remove files from Yandex Cloud service.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/**/*.js"
+    "test": "mocha test/**/*.spec.js"
   },
   "engines" : { "node" : ">=6.0.0" },
   "engineStrict" : true,
