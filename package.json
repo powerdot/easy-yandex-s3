@@ -8,8 +8,10 @@
     "lint": "eslint **/*.js",
     "lint:fix": "eslint --fix **/*.js"
   },
-  "engines" : { "node" : ">=6.0.0" },
-  "engineStrict" : true,
+  "engines": {
+    "node": ">=8.3.0"
+  },
+  "engineStrict": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/powerdot/easy-yandex-s3.git"
