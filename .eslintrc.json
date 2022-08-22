@@ -1,0 +1,35 @@
+{
+  "env": {
+    "node": true,
+    "commonjs": true,
+    "mocha": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "extends": ["airbnb-base", "plugin:node/recommended", "prettier"],
+  "rules": {
+    "no-underscore-dangle": "off",
+    "no-await-in-loop": "off",
+    "no-param-reassign": "off",
+    "no-use-before-define": "off",
+    "class-methods-use-this": "off",
+    "no-restricted-syntax": "off",
+    "no-plusplus": "off",
+    "no-continue": "off",
+    "no-console": "off"
+  },
+  "overrides": [
+    {
+      "files": "test/**",
+      "extends": ["plugin:mocha/recommended"],
+      "rules": {
+        "node/no-unpublished-require": 0,
+        "mocha/no-mocha-arrows": 0,
+        "func-names": 0,
+        "prefer-arrow-callback": 0
+      }
+    }
+  ]
+}

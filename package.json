@@ -4,7 +4,9 @@
   "description": "Use Yandex S3 API to upload, list, download and remove files from Yandex Cloud service.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/**/*.spec.js"
+    "test": "mocha test/**/*.spec.js",
+    "lint": "eslint **/*.js",
+    "lint:fix": "eslint --fix **/*.js"
   },
   "engines" : { "node" : ">=6.0.0" },
   "engineStrict" : true,
@@ -35,7 +37,14 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "dotenv": "^8.0.0",
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-mocha": "^10.1.0",
+    "eslint-plugin-node": "^11.1.0",
     "mocha": "^6.2.0",
-    "mockery": "^2.1.0"
+    "mockery": "^2.1.0",
+    "prettier": "^2.7.1"
   }
 }
