@@ -3,6 +3,7 @@ const md5 = require('md5');
 const fs = require('fs');
 const path = require('path');
 const mime = require('mime-types');
+const fileType = require('file-type');
 
 /**
  * Создание объекта для работы с S3 хранилищем
@@ -117,7 +118,7 @@ class EasyYandexS3 {
     } else {
       fileBody = file.buffer;
       try {
-        fileExt = `.${fileExt(file)}`;
+        fileExt = `.${getFileExt(file)}`;
       } catch (error) {
         if (debug) this._log('S3', debugObject, 'error:', error);
       }
@@ -455,6 +456,30 @@ function readDir(dirPath, originalFilePath, ignoreList) {
   }
   // console.log(paths);
   return paths;
+}
+
+/**
+ * Расширенное определение расширения файла
+ * https://github.com/powerdot/easy-yandex-s3/commit/8e5f3e42a5dffe6e54ceef16288e5a9c00868838
+ * @param {*} file
+ */
+function getFileExt(file) {
+  if (file.mimetype) {
+    switch (file.mimetype) {
+      case 'text/plain':
+        return 'txt';
+      case 'application/msword':
+        return 'doc';
+      case 'application/vnd.ms-excel':
+        return 'xls';
+      case 'text/csv':
+        return 'csv';
+      default:
+        return fileType(file.buffer).ext;
+    }
+  } else if (file.buffer) return fileType(file.buffer).ext;
+
+  return '';
 }
 
 /**
