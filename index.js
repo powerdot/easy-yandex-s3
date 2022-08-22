@@ -51,7 +51,7 @@ class EasyYandexS3 {
 
     this.Bucket = params.Bucket;
 
-    this.default_ignoreList = ['.DS_Store'];
+    this.defaultIgnoreList = ['.DS_Store'];
   }
 
   _log(...args) {
@@ -102,7 +102,7 @@ class EasyYandexS3 {
           throw new Error(`directory on path is not found (${dirPath})`);
         if (debug) this._log('S3', debugObject, 'folder to upload found', file.path);
         if (!file.ignore) file.ignore = [];
-        const ignoreList = [...this.default_ignoreList, ...file.ignore];
+        const ignoreList = [...this.defaultIgnoreList, ...file.ignore];
         const u = await this._uploadDirectory(dirPath, file, route, ignoreList);
         if (debug) this._log('S3', debugObject, 'folder upload done', u.length, 'files');
         return u;
