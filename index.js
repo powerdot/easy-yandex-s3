@@ -175,37 +175,23 @@ class EasyYandexS3 {
     const { debug } = this;
     const debugObject = '_uploadDirectory';
 
-    const uploaded = [];
-    const threads = sliceArrayToThreads(readDir(dir, dir, ignoreList), 1); // TODO params.threads
+    const dirContent = readDir(dir, dir, ignoreList);
 
-    // TODO Threads
-    // var thread_id = uniqid();
-    // var new_threads = this.threads[thread_id];
-    // this.threads[thread_id] = {proccesses: [], results: [], callback: params.callback};
+    if (debug) this._log('S3', debugObject, 'Promises length:', dirContent.length);
 
-    if (debug) this._log('S3', debugObject, 'threads divided:', threads.length);
+    const s3Promises = [];
 
-    for (const threadFiles of threads) {
-      for (const file of threadFiles) {
-        params.path = file.fullFilePath;
-        if (params.name) params.name = false;
-        if (params.save_name) params.name = file.fileName;
-        if (debug)
-          this._log('S3', debugObject, 'dir file uploading:', route, 'to', file.relativeDirPath);
-
-        // TODO Threads
-        // new_threads.proccesses.push(
-        // 	new Promise(async function(resolve, reject, new_threads) {
-        // 		var u = await this.Upload(params, path.resolve(route, file.relativeDirPath));
-        // 		new_threads.results.push(u);
-        // 		if(new_threads.proccesses.length === new_threads.results) new_threads.callback(new_threads.results);
-        // 	})
-        // );
-        const u = await this.Upload(params, path.join(route, file.relativeDirPath));
-        uploaded.push(u);
-      }
+    for (const file of dirContent) {
+      params.path = file.fullFilePath;
+      if (params.name) params.name = false;
+      if (params.save_name) params.name = file.fileName;
+      if (debug)
+        this._log('S3', debugObject, 'dir file uploading:', route, 'to', file.relativeDirPath);
+      const s3Promise = this.Upload(params, path.join(route, file.relativeDirPath));
+      s3Promises.push(s3Promise);
     }
-    return uploaded;
+
+    return Promise.all(s3Promises);
   }
 
   async _uploadArray(array, route) {
@@ -493,25 +479,6 @@ function getFileExt(file) {
   } else if (file.buffer) return fileType(file.buffer).ext;
 
   return '';
-}
-
-/**
- * Разделение массива на n- массивов. В зависимости от аргумента threads (n). Спасибо, Stackoverflow.
- * https://stackoverflow.com/questions/41964628/slice-array-into-an-array-of-arrays
- * @param {Array} arr Массив
- * @param {Number} threads Потоки
- */
-function sliceArrayToThreads(arr, threads) {
-  if (!threads) threads = 1;
-  if (threads <= 0) threads = 1;
-  const size = arr.length / threads;
-  let step = 0;
-  const sliceArr = [];
-  const len = arr.length;
-  while (step < len) {
-    sliceArr.push(arr.slice(step, (step += size)));
-  }
-  return sliceArr;
 }
 
 module.exports = EasyYandexS3;
