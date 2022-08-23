@@ -74,10 +74,6 @@ class EasyYandexS3 {
    * @returns {Promise<Object>} Результат загрузки
    */
   async Upload(file, route) {
-    let fileBody;
-    let fileExt;
-    let fileUploadName;
-
     if (typeof route !== 'string') {
       throw new Error('route (2nd argument) is not defined');
     }
@@ -113,20 +109,9 @@ class EasyYandexS3 {
       }
     }
 
-    if (file.path) {
-      fileBody = fs.readFileSync(file.path);
-      fileExt = path.extname(file.path);
-      if (file.save_name) fileUploadName = path.basename(file.path);
-      if (file.name) fileUploadName = file.name;
-    } else {
-      fileBody = file.buffer;
-      try {
-        fileExt = `.${getFileExt(file)}`;
-      } catch (error) {
-        if (debug) this._log('S3', debugObject, 'error:', error);
-      }
-      if (file.name) fileUploadName = file.name;
-    }
+    const fileAttributes = this._getFileAttributes(file, debugObject);
+    const { fileBody, fileExt } = fileAttributes;
+    let { fileUploadName } = fileAttributes;
 
     if (route.slice(-1) !== '/') route += '/';
     if (route[0] === '/') route = route.slice(1);
@@ -159,6 +144,31 @@ class EasyYandexS3 {
       if (debug) this._log('S3', debugObject, 'error:', error);
       return false;
     }
+  }
+
+  _getFileAttributes(file, debugObject) {
+    let fileBody;
+    let fileExt;
+    let fileUploadName;
+
+    const { debug } = this;
+
+    if (file.path) {
+      fileBody = fs.readFileSync(file.path);
+      fileExt = path.extname(file.path);
+      if (file.save_name) fileUploadName = path.basename(file.path);
+      if (file.name) fileUploadName = file.name;
+    } else {
+      fileBody = file.buffer;
+      try {
+        fileExt = `.${getFileExt(file)}`;
+      } catch (error) {
+        if (debug) this._log('S3', debugObject, 'error:', error);
+      }
+      if (file.name) fileUploadName = file.name;
+    }
+
+    return { fileBody, fileExt, fileUploadName };
   }
 
   async _uploadDirectory(dir, params, route, ignoreList) {
