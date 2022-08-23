@@ -7,46 +7,143 @@ const s3 = require('../s3');
 describe('Upload', function () {
   this.timeout(20000);
 
-  it('file with full path with save name', async () => {
+  it('full path to uploaded file with save name', async () => {
+    const folderS3 = '/eys3-testing/';
+    const filename = 'file.rtf';
+
     const u = await s3.Upload(
-      { path: path.resolve(__dirname, '../data/file.rtf'), save_name: true },
-      '/eys3-testing/'
+      { path: path.resolve(__dirname, `../data/${filename}`), save_name: true },
+      folderS3
     );
-    expect(u).to.not.equal(false);
+
+    const keyS3 = `${folderS3}${filename}`.slice(1);
+
+    expect(u.Key).to.equal(keyS3);
+
+    await s3.CleanUp();
   });
 
   it('file with relative path with new name', async () => {
-    const u = await s3.Upload({ path: './test/data/file.rtf', name: 'test.rtf' }, '/eys3-testing/');
-    expect(u).to.not.equal(false);
+    const folderS3 = '/eys3-testing/';
+    const filenameS3 = 'test.rtf';
+
+    const u = await s3.Upload({ path: './test/data/file.rtf', name: filenameS3 }, folderS3);
+
+    const keyS3 = `${folderS3}${filenameS3}`.slice(1);
+
+    expect(u.Key).to.equal(keyS3);
+
+    await s3.CleanUp();
   });
 
   it('upload by file buffer', async () => {
-    const buffer = fs.readFileSync('./test/data/folder/file1.rtf');
-    const u = await s3.Upload({ buffer }, '/eys3-testing/');
-    expect(u).to.not.equal(false);
+    const uploadFolder = '/eys3-testing/';
+    const fileExtension = 'rtf';
+    const localFilePath = `./test/data/folder/file1.${fileExtension}`;
+
+    const buffer = fs.readFileSync(localFilePath);
+    const u = await s3.Upload({ buffer }, uploadFolder);
+
+    const keyParts = u.Key.split(/[/.]+/);
+    const [folderS3, filenameS3, fileExtensionS3] = keyParts;
+
+    const isChecksum = !!filenameS3.match(/^[0-9a-f]{32}$/);
+
+    expect(isChecksum).to.be.equal(true);
+    expect(folderS3).to.be.equal(uploadFolder.slice(1, -1));
+    expect(fileExtensionS3).to.be.equal(fileExtension);
+
+    await s3.CleanUp();
   });
 
   it('upload array of files with md5 names', async () => {
-    const u = await s3.Upload(
-      [{ path: './test/data/folder/file1.rtf' }, { path: './test/data/folder/file2.rtf' }],
-      '/eys3-testing/'
-    );
-    expect(u).to.be.an('array').that.does.not.include(false);
+    const uploadFolder = '/eys3-testing/';
+    const fileExtension = 'rtf';
+
+    const localFilePath1 = `./test/data/folder/file1.${fileExtension}`;
+    const localFilePath2 = `./test/data/folder/file2.${fileExtension}`;
+
+    const u = await s3.Upload([{ path: localFilePath1 }, { path: localFilePath2 }], uploadFolder);
+
     expect(u).have.lengthOf(2);
+
+    u.forEach((result) => {
+      const keyParts = result.Key.split(/[/.]+/);
+      const [folderS3, filenameS3, fileExtensionS3] = keyParts;
+
+      const isChecksum = !!filenameS3.match(/^[0-9a-f]{32}$/);
+
+      expect(isChecksum).to.be.equal(true);
+      expect(folderS3).to.be.equal(uploadFolder.slice(1, -1));
+      expect(fileExtensionS3).to.be.equal(fileExtension);
+    });
+
+    await s3.CleanUp();
   });
 
+  // this test doesn't work correctly with files that have same content because of md5
+  // it's override files with same content(or only same extension and content)
   it('upload full folder with relative path with md5 names', async () => {
-    const u = await s3.Upload({ path: './test/data/folder' }, '/eys3-testing/');
-    expect(u).to.be.an('array').that.does.not.include(false);
+    const uploadFolder = '/eys3-testing/';
+    const subfolder = 'folder1';
+    const fileExtension = 'rtf';
+
+    const u = await s3.Upload({ path: './test/data/folder' }, uploadFolder);
+
     expect(u).have.lengthOf(3);
+
+    u.forEach(({ Key }) => {
+      const keyParts = Key.split(/[/.]+/);
+
+      let folderS3;
+      let subfolderS3;
+      let filenameS3;
+      let fileExtensionS3;
+
+      if (keyParts.length === 4) {
+        [folderS3, subfolderS3, filenameS3, fileExtensionS3] = keyParts;
+      } else {
+        [folderS3, filenameS3, fileExtensionS3] = keyParts;
+      }
+
+      const isChecksum = !!filenameS3.match(/^[0-9a-f]{32}$/);
+
+      expect(isChecksum).to.be.equal(true);
+      expect(folderS3).to.be.equal(uploadFolder.slice(1, -1));
+      expect(fileExtensionS3).to.be.equal(fileExtension);
+
+      if (keyParts.length === 4) {
+        expect(subfolderS3).to.be.equal(subfolder);
+      }
+    });
+
+    await s3.CleanUp();
   });
 
   it('upload full folder with relative path with save names and ignore', async () => {
+    const uploadFolder = '/eys3-testing/';
+    const subfolder = 'folder';
+    const fileExtension = 'rtf';
+
     const u = await s3.Upload(
-      { path: './test/data/folder', save_name: true, ignore: ['/folder1'] },
+      { path: './test/data', save_name: true, ignore: ['/folder/folder1', 'file.rtf'] },
       '/eys3-testing/'
     );
-    expect(u).to.be.an('array').that.does.not.include(false);
+
     expect(u).have.lengthOf(2);
+
+    u.forEach(({ Key }) => {
+      const keyParts = Key.split(/[/.]+/);
+      const [folderS3, subfolderS3, filenameS3, fileExtensionS3] = keyParts;
+
+      const isCorrectFilename = !!filenameS3.match(/^file(1|2)$/);
+
+      expect(isCorrectFilename).to.be.equal(true);
+      expect(folderS3).to.be.equal(uploadFolder.slice(1, -1));
+      expect(subfolderS3).to.be.equal(subfolder);
+      expect(fileExtensionS3).to.be.equal(fileExtension);
+    });
+
+    await s3.CleanUp();
   });
 });
