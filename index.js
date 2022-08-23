@@ -78,6 +78,10 @@ class EasyYandexS3 {
     let fileExt;
     let fileUploadName;
 
+    if (typeof route === 'string') {
+      throw new Error('route (2nd argument) is not defined');
+    }
+
     const { debug } = this;
     const debugObject = 'upload';
 
@@ -95,7 +99,6 @@ class EasyYandexS3 {
 
       if (!fs.existsSync(file.path))
         throw new Error(`file/directory on path is not found (${file.path})`);
-      if (!route) throw new Error('route (2nd argument) is not defined');
 
       if (fs.lstatSync(file.path).isDirectory()) {
         const dirPath = file.path;
