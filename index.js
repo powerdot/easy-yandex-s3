@@ -98,8 +98,6 @@ class EasyYandexS3 {
 
       if (fs.lstatSync(file.path).isDirectory()) {
         const dirPath = file.path;
-        // if (!fs.lstatSync(dirPath).isDirectory())
-        //   throw new Error(`directory on path is not found (${dirPath})`);
         if (debug) this._log('S3', debugObject, 'folder to upload found', file.path);
         if (!file.ignore) file.ignore = [];
         const ignoreList = [...this.defaultIgnoreList, ...file.ignore];
@@ -113,11 +111,14 @@ class EasyYandexS3 {
     const { fileBody, fileExt } = fileAttributes;
     let { fileUploadName } = fileAttributes;
 
+    route = route.replace(/\\/g, '/');
     if (route.slice(-1) !== '/') route += '/';
     if (route[0] === '/') route = route.slice(1);
 
-    const fileMd5 = md5(fileBody);
-    if (!fileUploadName) fileUploadName = `${fileMd5}${fileExt}`;
+    if (!fileUploadName) {
+      const fileMd5 = md5(fileBody);
+      fileUploadName = `${fileMd5}${fileExt}`;
+    }
 
     const uploadRoute = route;
     const Key = `${uploadRoute}${fileUploadName}`;
