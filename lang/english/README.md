@@ -2,21 +2,21 @@
 
 [![Build Status](https://travis-ci.org/powerdot/easy-yandex-s3.svg?branch=master)](https://travis-ci.org/powerdot/easy-yandex-s3) [![YouTube IlyaDevman](https://storage.yandexcloud.net/actid-storage/GitHubImages/gt-yt-overview.png)](https://youtu.be/L_6PiJFaldI)
 
-Использовать S3 API **_Яндекс.Облака_** еще проще.
-Хранилище называется у них там **_Object Storage_**.
+Using the S3 API **_Yandex.Cloud_** is even easier.
+The storage is called **_Object Storage_**.
 
-Поддержка от NodeJS 8 версии.
+Support from Node.js 8 version
 
-✓ Загружайте файл  
-✓ Загружайте массив файлов  
-✓ Загружайте целые папки с вложенными внутри папками и файлами  
-✓ Загружайте Buffer  
-✓ Скачивайте файлы с бакета  
-✓ Удаляйте отдельные файлы с бакета  
-✓ Удаляйте все файлы бакета  
-✓ Получайте информацию о файлах в бакете
+✓ Upload a file  
+✓ Upload an array of files  
+✓ Upload entire folders with nested folders and files inside  
+✓ Upload a Buffer  
+✓ Download files from bucket  
+✓ Delete individual files from a bucket  
+✓ Clean up bucket  
+✓ Get information about files in a bucket
 
-Поехали!
+Let's go!
 
 ## Оглавление
 
