@@ -325,6 +325,9 @@ var list = await s3.GetList();
 var list = await s3.GetList('/test/');
 ```
 
+- `Contents` - содержит список файлов, содержащихся в папке `test`
+- `CommonPrefixes` - содержит список папок, содержащихся в папке `test`
+
 **return:**
 
 ```javascript
@@ -332,26 +335,30 @@ var list = await s3.GetList('/test/');
   IsTruncated: false,
   Contents: [
     {
-      Key: "test/",
-      LastModified: new Date("2019-07-08T13:52:57.000Z"),
-      ETag: '"md5sum"',
-      Size: 0,
-      StorageClass: "STANDARD",
+      Key: 'eys3-testing/file1.rtf',
+      LastModified: new Date("2022-08-24T01:55:02.431Z"),
+      ETag: '"ee4e1fb1ab82ee0a650d8e4a8c274d9b"',
+      ChecksumAlgorithm: [],
+      Size: 413,
+      StorageClass: 'STANDARD',
+      Owner: [Object]
     },
     {
-      Key: "test/name.png",
-      LastModified: new Date("2019-07-15T22:10:09.000Z"),
-      ETag: '"md5sum"',
-      Size: 20705,
-      StorageClass: "STANDARD",
-    },
+      Key: 'eys3-testing/file2.rtf',
+      LastModified: new Date("2022-08-24T01:55:02.483Z"),
+      ETag: '"ee4e1fb1ab82ee0a650d8e4a8c274d9b"',
+      ChecksumAlgorithm: [],
+      Size: 413,
+      StorageClass: 'STANDARD',
+      Owner: [Object]
+    }
   ],
-  Name: "testbucket",
-  Prefix: "test/",
-  Delimiter: "/",
+  Name: 's3library',
+  Prefix: 'eys3-testing/',
+  Delimiter: '/',
   MaxKeys: 1000,
-  CommonPrefixes: [],
-  KeyCount: 5,
+  CommonPrefixes: [ { Prefix: 'eys3-testing/folder1/' } ],
+  KeyCount: 3
 }
 ```
 
