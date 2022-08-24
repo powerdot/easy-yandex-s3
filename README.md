@@ -117,7 +117,7 @@ var s3 = new EasyYandexS3({
 ```
 
 - Загрузка по расположению файла  
-  123.png -> [bucket-name]/test/07af8a67f6a4fa5f65a7f687a98fa6f2a34f.png
+  123.png -> [bucket-name]/test/d20e9d31-8eab-4618-aa1d-12dedc794356.png
 
 ```javascript
 var upload = await s3.Upload(
@@ -128,7 +128,7 @@ var upload = await s3.Upload(
 );
 console.log(upload); // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
 // если вернулся false - произошла ошибка
-// Файл загрузится в [my-stogare]/test/{md5_сумма}.{расширение}
+// Файл загрузится в [my-stogare]/test/{uuid-v4}.{расширение}
 ```
 
 - Загрузка по расположению файла, с указанием оригинального имени и расширения файла  
@@ -164,7 +164,7 @@ console.log(upload); // <- Возвращает путь к файлу в хра
 ```
 
 - Загрузка буфера  
-  <Buffer> -> [bucket-name]/test/cad9c7a68dca57ca6dc9a7dc8a86c.png
+  <Buffer> -> [bucket-name]/test/d20e9d31-8eab-4618-aa1d-12dedc794356.png
 
 ```javascript
 var upload = await s3.Upload(
@@ -175,7 +175,7 @@ var upload = await s3.Upload(
 );
 console.log(upload); // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
 // если вернулся false - произошла ошибка
-// Файл загрузится в [my-stogare]/test/{md5_сумма}.{расширение}
+// Файл загрузится в [my-stogare]/test/{uuid-v4}.{расширение}
 ```
 
 - Загрузка буфера с определением имени и расширения файла  
@@ -278,7 +278,7 @@ console.log(upload); // <- массив загруженных файлов
 var upload = await s3.Upload(
   [
     { path: './file1.jpg', save_name: true }, // относительный путь до файла с сохранением имени
-    { path: '/Users/powerodt/dev/sites/folder/file2.css' }, // прямой путь до файла с изменением имени на md5-сумму
+    { path: '/Users/powerodt/dev/sites/folder/file2.css' }, // прямой путь до файла с изменением имени на uuid-v4
     { path: './file.html', name: 'index.html' }, // относительный путь на файл с изменением имени при загрузке на index.html
   ],
   '/folder_on_server/'
