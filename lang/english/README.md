@@ -18,25 +18,25 @@ Support from Node.js 8 version
 
 Let's go!
 
-## Оглавление
+## Contents
 
-- [Теория](#теория-orly) - что такое хранилище и как работает
-- [Инструкция создания](#создайте-сервисный-аккаунт-в-яндексоблаке) сервисного аккаунта
-- [Начало работы](#как-с-этим-работать)
-- - [Загрузка файла](#загрузка-файла-в-бакет)
-- - - [Загрузка файлов](#загрузка-файлов-в-бакет)
-- - [Получение списка директорий и файлов бакета](#получение-списка-директорий-и-файлов-бакета)
-- - [Скачивание файла из бакета](#получение-списка-директорий-и-файлов-бакета)
-- - [Удаление файла из бакета](#удаление-файла-из-бакета)
-- - [Удаление всех файлов из бакета](#удаление-всех-файлов-из-бакета)
-- [Примеры использования](#примеры-использования)
-- - [Загрузка с multer](#multer-и-express)
-- [Разработчик git@powerdot](https://github.com/powerdot/)
+- [Theory](#теория-orly) - what is storage and how does it work
+- [Instructions](#создайте-сервисный-аккаунт-в-яндексоблаке) for creating a service account
+- [Get started](#как-с-этим-работать)
+- - [File upload](#загрузка-файла-в-бакет)
+- - - [Upload files](#загрузка-файлов-в-бакет)
+- - [Get list of directories and files of bucket](#получение-списка-директорий-и-файлов-бакета)
+- - [Download file from bucket](#получение-списка-директорий-и-файлов-бакета)
+- - [Delete file from bucket](#удаление-файла-из-бакета)
+- - [Delete every file from bucket](#удаление-всех-файлов-из-бакета)
+- [Examples](#примеры-использования)
+- - [Upload with multer](#multer-и-express)
+- [Developer git@powerdot](https://github.com/powerdot/)
 
-Ссылка на описание официального API Яндекса.  
+Link to official Yandex docs.  
 https://cloud.yandex.ru/docs/storage/s3/
 
-Ссылка на описание S3 API Amazon (англ.)  
+Link to description of S3 API Amazon  
 https://docs.aws.amazon.com/en_us/AmazonS3/latest/API/Welcome.html
 
 ## Теория O'RLY
