@@ -92,6 +92,10 @@ describe('Upload', function () {
 
     expect(u).have.lengthOf(3);
 
+    // convert objects to json, use Set to get unique values
+    const uniqueFiles = [...new Set(u.map((el) => JSON.stringify(el)))];
+    expect(uniqueFiles).have.lengthOf(3);
+
     u.forEach(({ Key }) => {
       const keyParts = Key.split(/[/.]+/);
 
