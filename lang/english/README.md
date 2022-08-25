@@ -20,7 +20,7 @@ Let's go!
 
 ## Contents
 
-- [Theory](#теория-orly) - what is storage and how does it work
+- [Theory](#theory-orly) - what is storage and how does it work
 - [Instructions](#создайте-сервисный-аккаунт-в-яндексоблаке) for creating a service account
 - [Get started](#как-с-этим-работать)
 - - [File upload](#загрузка-файла-в-бакет)
@@ -47,9 +47,9 @@ To upload something to Yandex.Cloud and store your files there, you need to crea
 
 Bucket has an ID. The ID matches its name, which you come up with, for example **my-storage**.
 
-Bucket access can be obtained using a special account, it is called **сервисный аккаунт**.
+Bucket access can be obtained using a special account, it is called **service account**.
 
-From the service account there is a login and password, together login and password are called **ключем**, where the login is **"Идентификатор ключа"**, and the password is **"Секретный ключ"**. Don't be afraid, everything is very easy here :)
+From the service account there is a login and password, together login and password are called **key**, where the login is **"Key ID"**, and the password is **"Private key"**. Don't be afraid, everything is very easy here :)
 
 And so, suppose you have already made your bucket (I don’t tell you how to do it, everything is quite simple there). Or maybe even already you made folders inside (by the way, this is not necessary).
 
