@@ -22,7 +22,7 @@ Let's go!
 
 - [Theory](#theory-orly) - what is storage and how does it work
 - [Instructions](#create-a-service-account-in-yandexcloud) for creating a service account
-- [Get started](#как-с-этим-работать)
+- [Get started](#get-started)
 - - [File upload](#загрузка-файла-в-бакет)
 - - - [Upload files](#загрузка-файлов-в-бакет)
 - - [Get list of directories and files of bucket](#получение-списка-директорий-и-файлов-бакета)
@@ -78,28 +78,28 @@ Time to get access for manipulations with our bucket!
 
 Congratulation! Now you have **Key ID** (accessKeyId) and **Private key** (secretAccessKey).
 
-## Как с этим работать
+## Get Started
 
-Установите npm-модуль в директории вашего проекта, это очень просто.
+Install it with npm
 
 ```bash
 npm i easy-yandex-s3
 ```
 
-### Инициализируем работу с бакетом.
+### Initialization stage
 
 ```javascript
-// Подключаем модуль
+// import module
 var EasyYandexS3 = require('easy-yandex-s3');
 
-// Инициализация
+// initialization
 var s3 = new EasyYandexS3({
   auth: {
-    accessKeyId: 'ИДЕНТИФИКАТОР_КЛЮЧА',
-    secretAccessKey: 'ДЛИННЫЙ_СЕКРЕТНЫЙ_КЛЮЧ',
+    accessKeyId: 'KEY_ID',
+    secretAccessKey: 'PRIVATE_KEY',
   },
-  Bucket: 'НАЗВАНИЕ_БАКЕТА', // например, "my-storage",
-  debug: true, // Дебаг в консоли, потом можете удалить в релизе
+  Bucket: 'BUCKET_NAME',
+  debug: true, // debug by console.log
 });
 ```
 
