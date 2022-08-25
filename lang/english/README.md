@@ -20,7 +20,7 @@ Let's go!
 
 ## Contents
 
-- [Theory](#теория-orly) - what is storage and how does it work
+- [Theory](#theory-orly) - what is storage and how does it work
 - [Instructions](#создайте-сервисный-аккаунт-в-яндексоблаке) for creating a service account
 - [Get started](#как-с-этим-работать)
 - - [File upload](#загрузка-файла-в-бакет)
@@ -39,21 +39,21 @@ https://cloud.yandex.ru/docs/storage/s3/
 Link to description of S3 API Amazon  
 https://docs.aws.amazon.com/en_us/AmazonS3/latest/API/Welcome.html
 
-## Теория O'RLY
+## Theory O'RLY
 
-Хранилище состоит из бакетов.  
-Бакет (Bucket) - это, грубо говоря, ваш жесткий диск в интернетах.  
-Чтобы загружать что-либо в Яндекс.Облако и хранить там свои файлы, вам нужно сделать этот самый бакет.
+The storage consists of buckets.
+Bucket is, roughly speaking, your hard drive on the Internet.
+To upload something to Yandex.Cloud and store your files there, you need to create this bucket.
 
-У бакета есть ID. ID совпадает с его названием, которое вы придумаете, например **my-storage**.
+Bucket has an ID. The ID matches its name, which you come up with, for example **my-storage**.
 
-Доступ к бакету можно получить с помощью специального аккаунта, его называют **сервисный аккаунт**.
+Bucket access can be obtained using a special account, it is called **service account**.
 
-От него есть логин и пароль, только логин и пароль называется **ключем**, а логин - это **"Идентификатор ключа"**, а пароль - это **"Секретный ключ"**. Не бойтесь, здесь все очень легко.
+From the service account there is a login and password, together login and password are called **key**, where the login is **"Key ID"**, and the password is **"Private key"**. Don't be afraid, everything is very easy here :)
 
-И так, предположим вы уже сделали свой бакет (как его делать, я не рассказываю, там всё довольно просто). А может даже уже сделали папки внутри (кстати, это не обязательно).
+And so, suppose you have already made your bucket (I don’t tell you how to do it, everything is quite simple there). Or maybe even already you made folders inside (by the way, this is not necessary).
 
-Время получить доступ для работ с бакетом!
+Time to get access for manipulations with our bucket!
 
 ## Создайте сервисный аккаунт в Яндекс.Облаке
 
