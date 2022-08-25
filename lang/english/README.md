@@ -21,7 +21,7 @@ Let's go!
 ## Contents
 
 - [Theory](#theory-orly) - what is storage and how does it work
-- [Instructions](#создайте-сервисный-аккаунт-в-яндексоблаке) for creating a service account
+- [Instructions](#create-a-service-account-in-yandexcloud) for creating a service account
 - [Get started](#как-с-этим-работать)
 - - [File upload](#загрузка-файла-в-бакет)
 - - - [Upload files](#загрузка-файлов-в-бакет)
@@ -55,28 +55,28 @@ And so, suppose you have already made your bucket (I don’t tell you how to do 
 
 Time to get access for manipulations with our bucket!
 
-## Создайте сервисный аккаунт в Яндекс.Облаке
+## Create a service account in Yandex.Cloud
 
-1. Зайдите в ЛК  
+1. Log in to your personal account 
    https://console.cloud.yandex.ru/cloud
 
-2. В каталогах выберите нужный каталог в списке справа.
+2. In directories, select the desired directory in the list on the right.
 
-3. В меню слева нажмите _Сервисные аккаунты_
+3. In the menu on the left, click _Service accounts_
 
-4. Справа сверху нажмите _Создать аккаунт_
+4. Click on the top right _Create service account_
 
-5. Придумайте название аккаунту, оно вам не понадобится. Добавьте роли: iam.serviceAccounts.user, editor. Сохраняйте.
+5. Come up with a name for the account, you won't need it. Add Roles: iam.serviceAccounts.user, editor. Save.
 
-6. Нажмите на сервисный аккаунт, чтобы открыть его.
+6. Click on a service account to open it.
 
-7. Справа сверху нажмите "Создать новый ключ" -> "Создать клч доступа"
+7. Click on the top right "Create new key" -> "Create static access key"
 
-8. Придумайте описание. Создавайте.
+8. Come up with a description. Create it.
 
-9. У вас появилось окошко с 2мя ключами. Скопируйте их куда-нибудь, потому что секретный ключ выдается 1 раз в этой связке. Больше вы его не увидите.
+9. You have a window with 2 keys. Copy them somewhere, because the secret key is issued 1 time in this bundle. You won't see him again.
 
-Теперь у вас есть **Идентификатор ключа** (accessKeyId) и **Секретный ключ** (secretAccessKey), поздравляю, от души.
+Congratulation! Now you have **Key ID** (accessKeyId) and **Private key** (secretAccessKey).
 
 ## Как с этим работать
 
