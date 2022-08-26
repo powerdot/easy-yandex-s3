@@ -1,6 +1,6 @@
 {
   "name": "easy-yandex-s3",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "Use Yandex S3 API to upload, list, download and remove files from Yandex Cloud service.",
   "main": "index.js",
   "scripts": {
@@ -24,6 +24,13 @@
     "bucket"
   ],
   "author": "@powerdot Ilya Rychagov",
+  "contributors": [
+    {
+      "name": "Nikita Voloshin",
+      "email": "dev.nukuutos@gmail.com",
+      "url": "https://github.com/nukuutos"
+    }
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/powerdot/easy-yandex-s3/issues"

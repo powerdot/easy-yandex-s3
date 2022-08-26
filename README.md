@@ -31,7 +31,8 @@
 - - [Удаление всех файлов из бакета](#удаление-всех-файлов-из-бакета)
 - [Примеры использования](#примеры-использования)
 - - [Загрузка с multer](#multer-и-express)
-- [Разработчик git@powerdot](https://github.com/powerdot/)
+- [Разработчик @powerdot](https://github.com/powerdot/)
+- [Разработчик @nukuutos](https://github.com/nukuutos/)
 
 Ссылка на описание официального API Яндекса.  
 https://cloud.yandex.ru/docs/storage/s3/

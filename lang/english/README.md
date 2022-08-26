@@ -31,7 +31,8 @@ Let's go!
 - - [Delete every file from bucket](#удаление-всех-файлов-из-бакета)
 - [Examples](#примеры-использования)
 - - [Upload with multer](#multer-и-express)
-- [Developer git@powerdot](https://github.com/powerdot/)
+- [Developer @powerdot](https://github.com/powerdot/)
+- [Developer @nukuutos](https://github.com/nukuutos/)
 
 Link to official Yandex docs.  
 https://cloud.yandex.ru/docs/storage/s3/
