@@ -24,7 +24,7 @@ Let's go!
 - [Instructions](#create-a-service-account-in-yandexcloud) for creating a service account
 - [Get started](#get-started)
 - - [File upload](#file-upload)
-- - - [Upload files](#загрузка-файлов-в-бакет)
+- - - [Upload files](#upload-files)
 - - [Get list of directories and files of bucket](#получение-списка-директорий-и-файлов-бакета)
 - - [Download file from bucket](#получение-списка-директорий-и-файлов-бакета)
 - - [Delete file from bucket](#удаление-файла-из-бакета)
@@ -218,14 +218,13 @@ console.log(upload);
 }
 ```
 
-#### Загрузка файлов в бакет
+#### Upload files
 
-- Загружаем контент папки в бакет  
-  контент папки -> [bucket]/folder_on_server/
+- Upload content of a local folder -> [bucket]/folder_on_server/
 
-Модуль берет все файлы и папки внутри указанной папки. **То есть саму папку он не загрузит, а только ее контент.**
+Our module takes files and subfolders inside local folder.
 
-Представим себе папку `./my_folder`:
+Suppose a folder `./my_folder`:
 
 - my_folder
 - - 1.png
@@ -233,70 +232,67 @@ console.log(upload);
 - - folder_inside
 - - - 3.png
 
-Устанавливаем параметр `route` как "**folder_on_server**", грубо говоря, это `[my_bucket]/folder_on_server/`  
-То загрузка на бакет будет следующей:
+Set `route` parameter to "**folder_on_server**", and we get this path on s3 `[my_bucket]/folder_on_server/`  
+Our files after uploading to s3:
 
 `[my_bucket]/folder_on_server/1.png `
 `[my_bucket]/folder_on_server/2.png `
 `[my_bucket]/folder_on_server/folder_inside/3.png `
 
-Грубо говоря, мы просто телепортируем контент указанный папки в указанную папку на сервере.  
-Ребят, это просто CMD+C CMD+V.
-
 ```javascript
-// Относительный путь:
+// Relative path:
 var upload = await s3.Upload(
   {
-    path: './my_folder', // относительный путь до папки
-    save_name: true, // сохранять оригинальные названия файлов
+    path: './my_folder', // relative path to folder
+    save_name: true, // save original names of files
   },
   '/folder_on_server/'
 );
-console.log(upload); // <- массив загруженных файлов
+console.log(upload); // <- array of uploaded files
 ```
 
 ```javascript
-// Игнорируем файлы и папки внутри:
+// Ignore files and folders inside
 var upload = await s3.Upload(
   {
-    path: './my_folder', // относительный путь до папки
-    save_name: true, // сохранять оригинальные названия файлов
-    ignore: ['.git', '/assets/video'], // игнорируем все файлы .git и путь внутри с файлами /assets/video
+    path: './my_folder', // relative path to folder
+    save_name: true, // save original names of files
+    ignore: ['.git', '/assets/video'], // ignore .git and path /assets/video
   },
   '/folder_on_server/'
 );
-console.log(upload); // <- массив загруженных файлов
+console.log(upload); // <- array of uploaded files
 ```
 
 ```javascript
-// Прямой путь:
+// absolute path to local file:
 var upload = await s3.Upload(
   {
-    path: '/Users/powerdot/sites/example.com/', // прямой путь до папки
-    save_name: true, // сохранять оригинальные названия файлов
+    path: '/Users/powerdot/sites/example.com/', // absolute path to folder
+    save_name: true, // save original names of files
   },
   '/folder_on_server/'
 );
-console.log(upload); // <- массив загруженных файлов
+console.log(upload); // <- array of uploaded files
 ```
 
-- Загрузка нескольких файлов  
-  массив файлов -> [bucket]/folder_on_server/
+- Upload files with an array of files 
+  files array -> [bucket]/folder_on_server/
 
 ```javascript
-// используем массив файлов следующим образом:
+// using an array of files:
 var upload = await s3.Upload(
   [
-    { path: './file1.jpg', save_name: true }, // относительный путь до файла с сохранением имени
-    { path: '/Users/powerodt/dev/sites/folder/file2.css' }, // прямой путь до файла с изменением имени на md5-сумму
-    { path: './file.html', name: 'index.html' }, // относительный путь на файл с изменением имени при загрузке на index.html
+    { path: './file1.jpg', save_name: true }, // relative path to file, save name of this file
+    { path: '/Users/powerodt/dev/sites/folder/file2.css' }, // absolute path to file, filename will be updated to md5-checksum
+    { path: './file.html', name: 'index.html' }, // relative path to file with new name index.html
   ],
   '/folder_on_server/'
 );
 ```
 
 **return:**  
-Массив из Upload-объектов
+Array with uploaded objects
 
 ```javascript
 [
