@@ -25,7 +25,7 @@ Let's go!
 - [Get started](#get-started)
 - - [File upload](#file-upload)
 - - - [Upload files](#upload-files)
-- - [Get list of directories and files of bucket](#получение-списка-директорий-и-файлов-бакета)
+- - [Get list of directories and files of bucket](#getting-a-list-of-bucket-directories-and-files)
 - - [Download file from bucket](#получение-списка-директорий-и-файлов-бакета)
 - - [Delete file from bucket](#удаление-файла-из-бакета)
 - - [Delete every file from bucket](#удаление-всех-файлов-из-бакета)
@@ -309,30 +309,30 @@ Array with uploaded objects
 ]
 ```
 
-### Получение списка директорий и файлов бакета
+### Getting a list of bucket directories and files
 
-Общая конструкция:
+General usage:
 
 ```javascript
 .GetList(
-    "директория/бакета"
+    "path/to/folder/in/bucket"
 );
 ```
 
-- Получение корня бакета
+- Get root of the bucket
 
 ```javascript
 var list = await s3.GetList();
 ```
 
-- Получение списка директорий и файлов из конкретной директории
+- Getting a list of subfolder and files of specific directory
 
 ```javascript
 var list = await s3.GetList('/test/');
 ```
 
-- `Contents` - содержит список файлов, содержащихся в папке `test`
-- `CommonPrefixes` - содержит список папок, содержащихся в папке `test`
+- `Contents` - contains files that are in folder `test`
+- `CommonPrefixes` - contains subfolders that are in folder `test`
 
 **return:**
 
