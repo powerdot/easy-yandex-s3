@@ -26,7 +26,7 @@ Let's go!
 - - [File upload](#file-upload)
 - - - [Upload files](#upload-files)
 - - [Get list of directories and files of bucket](#getting-a-list-of-bucket-directories-and-files)
-- - [Download file from bucket](#получение-списка-директорий-и-файлов-бакета)
+- - [Download file from bucket](#download-a-file)
 - - [Delete file from bucket](#удаление-файла-из-бакета)
 - - [Delete every file from bucket](#удаление-всех-файлов-из-бакета)
 - [Examples](#примеры-использования)
@@ -368,30 +368,30 @@ var list = await s3.GetList('/test/');
 }
 ```
 
-### Скачивание файла из бакета
+### Download a file
 
-Общая конструкция:
+General usage:
 
 ```javascript
 .Download(
-    "путь/до/файла/в/бакете",
-    "путь/куда/сохраняем/на/клиенте"
+    "path/to/file/in/bucket",
+    "path/to/save/file/locally"
 );
 ```
 
-- Скачивание файла и получение буфера этого файла
+- Download file and get buffer of this file
 
 ```javascript
 var download = await s3.Download('test/123.png');
 ```
 
-- Скачивание файла и сохранение его в файл
+- Download file and save it to local file
 
 ```javascript
 var download = await s3.Download('test/123.png', './myfile.png');
 
-// в download так же дополнительно вернется Buffer
-// а полученный файл с бакета будет сохранен как myfile.png в директории выполнения скрипта
+// download variable also has a buffer of downloaded file
+// received file from bucket will be saved as myfile.png
 ```
 
 **return:**
