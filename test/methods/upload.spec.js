@@ -4,6 +4,8 @@ const fs = require('fs');
 
 const s3 = require('../s3');
 
+const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
 describe('Upload', function () {
   this.timeout(20000);
 
@@ -47,16 +49,16 @@ describe('Upload', function () {
     const keyParts = u.Key.split(/[/.]+/);
     const [folderS3, filenameS3, fileExtensionS3] = keyParts;
 
-    const isChecksum = !!filenameS3.match(/^[0-9a-f]{32}$/);
+    const isUuid = !!filenameS3.match(uuidRegex);
 
-    expect(isChecksum).to.be.equal(true);
+    expect(isUuid).to.be.equal(true);
     expect(folderS3).to.be.equal(uploadFolder.slice(1, -1));
     expect(fileExtensionS3).to.be.equal(fileExtension);
 
     await s3.CleanUp();
   });
 
-  it('upload array of files with md5 names', async () => {
+  it('upload array of files with uuid names', async () => {
     const uploadFolder = '/eys3-testing/';
     const fileExtension = 'rtf';
 
@@ -71,9 +73,9 @@ describe('Upload', function () {
       const keyParts = result.Key.split(/[/.]+/);
       const [folderS3, filenameS3, fileExtensionS3] = keyParts;
 
-      const isChecksum = !!filenameS3.match(/^[0-9a-f]{32}$/);
+      const isUuid = !!filenameS3.match(uuidRegex);
 
-      expect(isChecksum).to.be.equal(true);
+      expect(isUuid).to.be.equal(true);
       expect(folderS3).to.be.equal(uploadFolder.slice(1, -1));
       expect(fileExtensionS3).to.be.equal(fileExtension);
     });
@@ -81,9 +83,7 @@ describe('Upload', function () {
     await s3.CleanUp();
   });
 
-  // this test doesn't work correctly with files that have same content because of md5
-  // it's override files with same content(or only same extension and content)
-  it('upload full folder with relative path with md5 names', async () => {
+  it('upload full folder with relative path with uuid names', async () => {
     const uploadFolder = '/eys3-testing/';
     const subfolder = 'folder1';
     const fileExtension = 'rtf';
@@ -110,9 +110,9 @@ describe('Upload', function () {
         [folderS3, filenameS3, fileExtensionS3] = keyParts;
       }
 
-      const isChecksum = !!filenameS3.match(/^[0-9a-f]{32}$/);
+      const isUuid = !!filenameS3.match(uuidRegex);
 
-      expect(isChecksum).to.be.equal(true);
+      expect(isUuid).to.be.equal(true);
       expect(folderS3).to.be.equal(uploadFolder.slice(1, -1));
       expect(fileExtensionS3).to.be.equal(fileExtension);
 

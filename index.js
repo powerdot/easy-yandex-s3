@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const md5 = require('md5');
+const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 const path = require('path');
 const mime = require('mime-types');
@@ -116,8 +116,8 @@ class EasyYandexS3 {
     if (route[0] === '/') route = route.slice(1);
 
     if (!fileUploadName) {
-      const fileMd5 = md5(fileBody);
-      fileUploadName = `${fileMd5}${fileExt}`;
+      const uniqueName = uuidv4();
+      fileUploadName = `${uniqueName}${fileExt}`;
     }
 
     const uploadRoute = route;
