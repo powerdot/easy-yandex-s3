@@ -23,7 +23,7 @@ Let's go!
 - [Theory](#theory-orly) - what is storage and how does it work
 - [Instructions](#create-a-service-account-in-yandexcloud) for creating a service account
 - [Get started](#get-started)
-- - [File upload](#загрузка-файла-в-бакет)
+- - [File upload](#file-upload)
 - - - [Upload files](#загрузка-файлов-в-бакет)
 - - [Get list of directories and files of bucket](#получение-списка-директорий-и-файлов-бакета)
 - - [Download file from bucket](#получение-списка-директорий-и-файлов-бакета)
@@ -105,18 +105,18 @@ var s3 = new EasyYandexS3({
 
 ---
 
-### Загрузка файла в бакет
+### File upload
 
-Общая конструкция:
+General usage:
 
 ```javascript
 .Upload(
-    { параметры },
-    "папка/в/бакете"
+    { parameters },
+    "path/to/folder/in/bucket"
 )
 ```
 
-- Загрузка по расположению файла  
+- Upload a file by local path
   123.png -> [bucket-name]/test/07af8a67f6a4fa5f65a7f687a98fa6f2a34f.png
 
 ```javascript
@@ -126,12 +126,14 @@ var upload = await s3.Upload(
   },
   '/test/'
 );
-console.log(upload); // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
-// если вернулся false - произошла ошибка
-// Файл загрузится в [my-stogare]/test/{md5_сумма}.{расширение}
+
+// Returns path to file in s3 and other stuff
+// if it returns false - error is happened
+// File is uploaded to [my-storage]/test/{md5_checksum}.{file extension}
+console.log(upload); 
 ```
 
-- Загрузка по расположению файла, с указанием оригинального имени и расширения файла  
+- Upload a file by local path and save filename of this file  
   123.png -> [bucket-name]/test/123.png
 
 ```javascript
@@ -142,12 +144,14 @@ var upload = await s3.Upload(
   },
   '/test/'
 );
-console.log(upload); // Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
-// если вернулся false - произошла ошибка
-// Файл загрузится в [my-stogare]/test/123.png
+
+// Returns path to file in s3 and other stuff
+// if it returns false - error is happened
+// File is uploaded to [my-storage]/test/123.png
+console.log(upload); 
 ```
 
-- Загрузка по расположению файла, с указанием имени файла для загрузки  
+- Upload a file by local path and assign new filename to this file in s3
   123.png -> [bucket-name]/test/lolkek.png
 
 ```javascript
@@ -158,12 +162,14 @@ var upload = await s3.Upload(
   },
   '/test/'
 );
-console.log(upload); // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
-// если вернулся false - произошла ошибка
-// Файл загрузится в [my-stogare]/test/lolkek.png
+
+// Returns path to file in s3 and other stuff
+// if it returns false - error is happened
+// File is uploaded to [my-storage]/test/lolkek.png
+console.log(upload); 
 ```
 
-- Загрузка буфера  
+- Upload a buffer 
   <Buffer> -> [bucket-name]/test/cad9c7a68dca57ca6dc9a7dc8a86c.png
 
 ```javascript
@@ -173,12 +179,14 @@ var upload = await s3.Upload(
   },
   '/test/'
 );
-console.log(upload); // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
-// если вернулся false - произошла ошибка
-// Файл загрузится в [my-stogare]/test/{md5_сумма}.{расширение}
+
+// Returns path to file in s3 and other stuff
+// if it returns false - error is happened
+// File is uploaded to [my-storage]/test/{md5_checksum}.{file extension}
+console.log(upload); 
 ```
 
-- Загрузка буфера с определением имени и расширения файла  
+- Upload a buffer with filename and extension
   <Buffer> -> [bucket-name]/test/lolkek.png
 
 ```javascript
@@ -189,9 +197,11 @@ var upload = await s3.Upload(
   },
   '/test/'
 );
-console.log(upload); // <- Возвращает путь к файлу в хранилище и всякую дополнительную информацию.
-// если вернулся false - произошла ошибка
-// Файл загрузится в [my-stogare]/test/lolkek.png
+
+// Returns path to file in s3 and other stuff
+// if it returns false - error is happened
+// File is uploaded to [my-storage]/test/lolkek.png
+console.log(upload); 
 ```
 
 **return:**
@@ -204,7 +214,7 @@ console.log(upload); // <- Возвращает путь к файлу в хра
    'https://actid-storage.storage.yandexcloud.net/test1/name.png',
   key: 'test1/name.png',
   Key: 'test1/name.png',
-  Bucket: 'actid-storage'
+  Bucket: 'my-storage'
 }
 ```
 
