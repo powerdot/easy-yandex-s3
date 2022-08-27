@@ -29,8 +29,8 @@ Let's go!
 - - [Download file from bucket](#download-a-file)
 - - [Remove file from bucket](#remove-a-file)
 - - [Remove every file from bucket](#remove-every-file-from-bucket)
-- [Examples](#примеры-использования)
-- - [Upload with multer](#multer-и-express)
+- [Examples](#examples)
+- - [Upload with multer](#multer-and-express)
 - [Developer @powerdot](https://github.com/powerdot/)
 - [Developer @nukuutos](https://github.com/nukuutos/)
 
@@ -467,49 +467,49 @@ Technically, files are deleted in batches by 1000 files. Each batch will have it
 false
 ```
 
-## Примеры использования
+## Examples
 
-### Multer и Express
+### Multer and Express
 
-Пример загрузки файлов через multer и express.  
-Кейс: нужно загрузить файл с фронта на сервер, а потом загрузить его на Yandex Object Storage.
+An example of uploading files via multer and express.
+Case: you need to upload a file from the client to the server, and then upload it to Yandex Object Storage.
 
-- Устанавливаешь express и multer
+- Installing express and multer
 
 ```bash
 npm i express
 npm i multer
 ```
 
-- В файле проекта привязываешь multer и easy-yandex-s3
+- Importing multer and easy-yandex-s3
 
 ```javascript
-// Создаем веб-сервер
+// Creating a web server
 var express = require('express');
 var app = express();
 app.listen(8000);
 
-// Подключаем multer и eys3
+// Importing multer и eys3
 var multer = require('multer');
 var EasyYandexS3 = require('easy-yandex-s3');
 
-// Указываем аутентификацию в Yandex Object Storage
+// Setting up s3 object
 var s3 = new EasyYandexS3({
   auth: {
     accessKeyId: '',
     secretAccessKey: '',
   },
-  Bucket: 'my-storage', // Название бакета
-  debug: false, // Дебаг в консоли
+  Bucket: 'my-storage', 
+  debug: false, 
 });
 
-// Подключаешь мидлвар multer для чтения загруженных файлов
+// Running multer middleware for uploading files
 app.use(multer().any());
 
-// Делаешь фетч post-запроса с отправленным файлом по ссылке /uploadFile
+// Making a post request with file be route /uploadFile
 app.post('/uploadFile', async (req, res) => {
-  let buffer = req.files[0].buffer; // Буфер загруженного файла
-  var upload = await s3.Upload({ buffer }, '/files/'); // Загрузка в бакет
-  res.send(upload); // Ответ сервера - ответ от Yandex Object Storage
+  let buffer = req.files[0].buffer; // Buffer of uploaded file
+  var upload = await s3.Upload({ buffer }, '/files/'); // Upload to bucket
+  res.send(upload); // Sever responds with response from Yandex Object Storage
 });
 ```
