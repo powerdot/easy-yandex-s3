@@ -413,13 +413,13 @@ var download = await s3.Download('test/123.png', './myfile.png');
 };
 ```
 
-### Удаление файла из бакета
+### Remove file
 
-Общая конструкция:
+General usage:
 
 ```javascript
 .Remove(
-    "/путь до файла в бакете/"
+    "/path/to/file/in/bucket"
 );
 ```
 
@@ -428,9 +428,9 @@ var download = await s3.Download('test/123.png', './myfile.png');
 ```javascript
 var remove = await s3.Remove('test/123.png');
 
-// возвращается true или false.
-// true при успешном удалении, даже если файла нет
-// false при других критических ошибках
+// Returns true или false.
+// true - file is removed successfully, even if the file does not exist
+// false - error
 ```
 
 **return:**
