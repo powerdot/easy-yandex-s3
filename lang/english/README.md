@@ -27,8 +27,8 @@ Let's go!
 - - - [Upload files](#upload-files)
 - - [Get list of directories and files of bucket](#getting-a-list-of-bucket-directories-and-files)
 - - [Download file from bucket](#download-a-file)
-- - [Delete file from bucket](#удаление-файла-из-бакета)
-- - [Delete every file from bucket](#удаление-всех-файлов-из-бакета)
+- - [Remove file from bucket](#remove-a-file)
+- - [Remove every file from bucket](#remove-every-file-from-bucket)
 - [Examples](#примеры-использования)
 - - [Upload with multer](#multer-и-express)
 - [Developer @powerdot](https://github.com/powerdot/)
@@ -413,7 +413,7 @@ var download = await s3.Download('test/123.png', './myfile.png');
 };
 ```
 
-### Remove file
+### Remove a file
 
 General usage:
 
@@ -423,7 +423,7 @@ General usage:
 );
 ```
 
-- Удаляем файл
+- Remove a file
 
 ```javascript
 var remove = await s3.Remove('test/123.png');
@@ -439,31 +439,31 @@ var remove = await s3.Remove('test/123.png');
 true;
 ```
 
-### Удаление всех файлов из бакета
+### Remove every file from bucket
 
-Общая инструкция:
+General usage:
 
 ```javascript
 .CleanUp()
 ```
 
-Очищаем бакет от файлов целиком и полностью:
+Clean up bucket:
 
 ```javascript
 var result = await s3.CleanUp();
 ```
 
-Технически файлы удаляются пачками по 1000 штук. Для каждой пачки будут свои `Deleted` и `Errors` ключи, которые содержат данные об успешно удалённых объектах(файлах) и данные о файлах, при удалении которых возникла ошибка. <br />
+Technically, files are deleted in batches by 1000 files. Each batch will have its own `Deleted` and `Errors` keys, which contain data about successfully deleted objects (files) and data about files that caused an error to be deleted. <br />
 **return:**
 
 ```javascript
-// Успешно удаленно 3 объекта
+// Successfully deleted 3 objects
 [ { Deleted: [ [Object], [Object], [Object] ], Errors: [] } ]
 
-// Что из себя представляет Object.
-{ Key: '/путь/до/файла', VersionId: 'null' }
+// What is object in side
+{ Key: '/path/to/file/in/bucket', VersionId: 'null' }
 
-// При неуспешном выполнении метода будет получен следующий результат:
+// On unsuccessfully running of 'CleanUp' method you've got next result:
 false
 ```
 
