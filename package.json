@@ -2,11 +2,13 @@
   "name": "easy-yandex-s3",
   "version": "1.1.8",
   "description": "Use Yandex S3 API to upload, list, download and remove files from Yandex Cloud service.",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "mocha test/**/*.spec.js",
     "lint": "eslint **/*.js",
-    "lint:fix": "eslint --fix **/*.js"
+    "lint:fix": "eslint --fix **/*.js",
+    "build": "tsc src/index.ts",
+    "dev_nodemon": "nodemon --inspect=3592 -e ts,tsx --exec node -r ts-node/register ./src/index.ts --output ./lib"
   },
   "engines": {
     "node": ">=8.3.0"
@@ -37,12 +39,14 @@
   },
   "homepage": "https://github.com/powerdot/easy-yandex-s3#readme",
   "dependencies": {
-    "aws-sdk": "^2.493.0",
+    "aws-sdk": "^2.1231.0",
     "file-type": "^12.0.1",
     "mime-types": "^2.1.24",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/es6-promise": "^3.3.0",
+    "@types/node": "^18.8.4",
     "chai": "^4.2.0",
     "dotenv": "^8.0.0",
     "eslint": "^8.2.0",
@@ -52,6 +56,7 @@
     "eslint-plugin-mocha": "^10.1.0",
     "eslint-plugin-node": "^11.1.0",
     "mocha": "^6.2.0",
-    "prettier": "^2.7.1"
+    "prettier": "^2.7.1",
+    "ts-node": "^10.9.1"
   }
 }

@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const fs = require('fs');
 
 const s3 = require('../s3');
-const EYS3 = require('../../index');
+const EYS3 = require('../../lib/index').default;
 
 describe('Download', function () {
   this.timeout(20000);

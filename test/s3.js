@@ -1,4 +1,4 @@
-const EYS3 = require('../index');
+const EYS3 = require('../lib/index').default;
 
 require('dotenv').config();
 
