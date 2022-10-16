@@ -4,9 +4,9 @@
   "description": "Use Yandex S3 API to upload, list, download and remove files from Yandex Cloud service.",
   "main": "lib/index.js",
   "scripts": {
-    "test": "mocha test/**/*.spec.js",
-    "lint": "eslint **/*.js",
-    "lint:fix": "eslint --fix **/*.js",
+    "test": "mocha test/**/*.spec.ts",
+    "lint": "eslint **/*.ts",
+    "lint:fix": "eslint --fix **/*.ts",
     "build": "tsc src/index.ts",
     "dev_nodemon": "nodemon --inspect=3592 -e ts,tsx --exec node -r ts-node/register ./src/index.ts --output ./lib"
   },
