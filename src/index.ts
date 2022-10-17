@@ -91,7 +91,7 @@ class EasyYandexS3 {
    *
    * @returns {Promise<Object>} Результат загрузки
    */
-  public async Upload(file: UploadFile | UploadFile[], route: string): Promise<S3.ManagedUpload.SendData | S3.ManagedUpload.SendData[]> {
+  public async Upload(file: UploadFile | UploadFile[], route: string): Promise<S3.ManagedUpload.SendData | S3.ManagedUpload.SendData[] | false> {
     if (typeof route !== 'string') {
       throw new Error('route (2nd argument) is not defined');
     }
@@ -161,7 +161,7 @@ class EasyYandexS3 {
       return s3Promise;
     } catch (error) {
       if (debug) this._log('S3', debugObject, 'error:', error);
-      throw new Error('S3 upload error');
+      return false;
     }
   }
 
@@ -245,7 +245,7 @@ class EasyYandexS3 {
    *
    * @returns {Promise<S3.ListObjectsV2Output>} Результат просмотра
    */
-  public async GetList(route: string): Promise<S3.ListObjectsV2Output> {
+  public async GetList(route: string): Promise<S3.ListObjectsV2Output | false> {
     if (!route) route = '/';
     if (route === './') route = '/';
     if (route) route += route.slice(-1) !== '/' ? '/' : '';
@@ -276,7 +276,7 @@ class EasyYandexS3 {
       return s3Promise;
     } catch (error) {
       if (debug) this._log('S3', debugObject, 'error:', error);
-      throw new Error('S3 listObjectsV2 error');
+      return false
     }
   }
 

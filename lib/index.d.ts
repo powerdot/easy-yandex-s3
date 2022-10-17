@@ -40,7 +40,7 @@ declare class EasyYandexS3 {
      *
      * @returns {Promise<Object>} Результат загрузки
      */
-    Upload(file: UploadFile | UploadFile[], route: string): Promise<S3.ManagedUpload.SendData | S3.ManagedUpload.SendData[]>;
+    Upload(file: UploadFile | UploadFile[], route: string): Promise<S3.ManagedUpload.SendData | S3.ManagedUpload.SendData[] | false>;
     private _getFileAttributes;
     private _uploadDirectory;
     private _uploadArray;
@@ -50,7 +50,7 @@ declare class EasyYandexS3 {
      *
      * @returns {Promise<S3.ListObjectsV2Output>} Результат просмотра
      */
-    GetList(route: string): Promise<S3.ListObjectsV2Output>;
+    GetList(route: string): Promise<S3.ListObjectsV2Output | false>;
     /**
      * Скачивание файла
      * @param {string} routeFullPath Полный путь до файла. С папками, с названием и расширением файла
