@@ -5,6 +5,15 @@
 Использовать S3 API **_Яндекс.Облака_** еще проще.
 Хранилище называется у них там **_Object Storage_**.
 
+ℹ️ **Внимание! Это версия 2.x**
+- Она переписана на TypeScript и имеет .d.ts файлы.  
+- Это не мешает использовать библиотеку в JavaScript проектах.  
+
+Для того, чтобы использовать старую стабильную версию библиотеки, реализованную на JavaScript:
+```bash
+npm i easy-yandex-s3@1.1.8
+```
+
 Поддержка от NodeJS 8 версии.
 
 ✓ Загружайте файл  
@@ -91,10 +100,11 @@ npm i easy-yandex-s3
 
 ```javascript
 // Подключаем модуль
-var EasyYandexS3 = require('easy-yandex-s3');
+let EasyYandexS3 = require('easy-yandex-s3').default;
+                                            ^ default — обязательно
 
 // Инициализация
-var s3 = new EasyYandexS3({
+let s3 = new EasyYandexS3({
   auth: {
     accessKeyId: 'ИДЕНТИФИКАТОР_КЛЮЧА',
     secretAccessKey: 'ДЛИННЫЙ_СЕКРЕТНЫЙ_КЛЮЧ',
@@ -121,7 +131,7 @@ var s3 = new EasyYandexS3({
   123.png -> [bucket-name]/test/d20e9d31-8eab-4618-aa1d-12dedc794356.png
 
 ```javascript
-var upload = await s3.Upload(
+let upload = await s3.Upload(
   {
     path: path.resolve(__dirname, './123.png'),
   },
@@ -136,7 +146,7 @@ console.log(upload); // <- Возвращает путь к файлу в хра
   123.png -> [bucket-name]/test/123.png
 
 ```javascript
-var upload = await s3.Upload(
+let upload = await s3.Upload(
   {
     path: path.resolve(__dirname, './123.png'),
     save_name: true,
@@ -152,7 +162,7 @@ console.log(upload); // Возвращает путь к файлу в хран�
   123.png -> [bucket-name]/test/lolkek.png
 
 ```javascript
-var upload = await s3.Upload(
+let upload = await s3.Upload(
   {
     path: path.resolve(__dirname, './123.png'),
     name: 'lolkek.png',
@@ -168,7 +178,7 @@ console.log(upload); // <- Возвращает путь к файлу в хра
   <Buffer> -> [bucket-name]/test/d20e9d31-8eab-4618-aa1d-12dedc794356.png
 
 ```javascript
-var upload = await s3.Upload(
+let upload = await s3.Upload(
   {
     buffer: file_buffer,
   },
@@ -183,7 +193,7 @@ console.log(upload); // <- Возвращает путь к файлу в хра
   <Buffer> -> [bucket-name]/test/lolkek.png
 
 ```javascript
-var upload = await s3.Upload(
+let upload = await s3.Upload(
   {
     buffer: file_buffer,
     name: 'lolkek.png',
@@ -236,7 +246,7 @@ console.log(upload); // <- Возвращает путь к файлу в хра
 
 ```javascript
 // Относительный путь:
-var upload = await s3.Upload(
+let upload = await s3.Upload(
   {
     path: './my_folder', // относительный путь до папки
     save_name: true, // сохранять оригинальные названия файлов
@@ -248,7 +258,7 @@ console.log(upload); // <- массив загруженных файлов
 
 ```javascript
 // Игнорируем файлы и папки внутри:
-var upload = await s3.Upload(
+let upload = await s3.Upload(
   {
     path: './my_folder', // относительный путь до папки
     save_name: true, // сохранять оригинальные названия файлов
@@ -261,7 +271,7 @@ console.log(upload); // <- массив загруженных файлов
 
 ```javascript
 // Прямой путь:
-var upload = await s3.Upload(
+let upload = await s3.Upload(
   {
     path: '/Users/powerdot/sites/example.com/', // прямой путь до папки
     save_name: true, // сохранять оригинальные названия файлов
@@ -276,7 +286,7 @@ console.log(upload); // <- массив загруженных файлов
 
 ```javascript
 // используем массив файлов следующим образом:
-var upload = await s3.Upload(
+let upload = await s3.Upload(
   [
     { path: './file1.jpg', save_name: true }, // относительный путь до файла с сохранением имени
     { path: '/Users/powerodt/dev/sites/folder/file2.css' }, // прямой путь до файла с изменением имени на uuid-v4
@@ -317,13 +327,13 @@ var upload = await s3.Upload(
 - Получение корня бакета
 
 ```javascript
-var list = await s3.GetList();
+let list = await s3.GetList();
 ```
 
 - Получение списка директорий и файлов из конкретной директории
 
 ```javascript
-var list = await s3.GetList('/test/');
+let list = await s3.GetList('/test/');
 ```
 
 - `Contents` - содержит список файлов, содержащихся в папке `test`
@@ -377,13 +387,13 @@ var list = await s3.GetList('/test/');
 - Скачивание файла и получение буфера этого файла
 
 ```javascript
-var download = await s3.Download('test/123.png');
+let download = await s3.Download('test/123.png');
 ```
 
 - Скачивание файла и сохранение его в файл
 
 ```javascript
-var download = await s3.Download('test/123.png', './myfile.png');
+let download = await s3.Download('test/123.png', './myfile.png');
 
 // в download так же дополнительно вернется Buffer
 // а полученный файл с бакета будет сохранен как myfile.png в директории выполнения скрипта
@@ -420,7 +430,7 @@ var download = await s3.Download('test/123.png', './myfile.png');
 - Удаляем файл
 
 ```javascript
-var remove = await s3.Remove('test/123.png');
+let remove = await s3.Remove('test/123.png');
 
 // возвращается true или false.
 // true при успешном удалении, даже если файла нет
@@ -444,7 +454,7 @@ true;
 Очищаем бакет от файлов целиком и полностью:
 
 ```javascript
-var result = await s3.CleanUp();
+let result = await s3.CleanUp();
 ```
 
 Технически файлы удаляются пачками по 1000 штук. Для каждой пачки будут свои `Deleted` и `Errors` ключи, которые содержат данные об успешно удалённых объектах(файлах) и данные о файлах, при удалении которых возникла ошибка. <br />
@@ -479,16 +489,16 @@ npm i multer
 
 ```javascript
 // Создаем веб-сервер
-var express = require('express');
-var app = express();
+let express = require('express');
+let app = express();
 app.listen(8000);
 
 // Подключаем multer и eys3
-var multer = require('multer');
-var EasyYandexS3 = require('easy-yandex-s3');
+let multer = require('multer');
+let EasyYandexS3 = require('easy-yandex-s3');
 
 // Указываем аутентификацию в Yandex Object Storage
-var s3 = new EasyYandexS3({
+let s3 = new EasyYandexS3({
   auth: {
     accessKeyId: '',
     secretAccessKey: '',
@@ -503,7 +513,7 @@ app.use(multer().any());
 // Делаешь фетч post-запроса с отправленным файлом по ссылке /uploadFile
 app.post('/uploadFile', async (req, res) => {
   let buffer = req.files[0].buffer; // Буфер загруженного файла
-  var upload = await s3.Upload({ buffer }, '/files/'); // Загрузка в бакет
+  let upload = await s3.Upload({ buffer }, '/files/'); // Загрузка в бакет
   res.send(upload); // Ответ сервера - ответ от Yandex Object Storage
 });
 ```
