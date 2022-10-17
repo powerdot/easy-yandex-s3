@@ -493,7 +493,7 @@ app.listen(8000);
 
 // Подключаем multer и eys3
 let multer = require('multer');
-let EasyYandexS3 = require('easy-yandex-s3');
+let EasyYandexS3 = require('easy-yandex-s3').default;
 
 // Указываем аутентификацию в Yandex Object Storage
 let s3 = new EasyYandexS3({
