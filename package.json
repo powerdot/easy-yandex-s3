@@ -7,7 +7,7 @@
     "test": "mocha test/**/*.spec.ts",
     "lint": "eslint **/*.ts",
     "lint:fix": "eslint --fix **/*.ts",
-    "build": "tsc src/index.ts",
+    "build": "tsc",
     "dev_nodemon": "nodemon --inspect=3592 -e ts,tsx --exec node -r ts-node/register ./src/index.ts --output ./lib"
   },
   "engines": {

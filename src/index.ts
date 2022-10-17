@@ -9,7 +9,8 @@ import ReadDir from './ReadDir';
 
 import type {
   DefaultParams,
-  DefaultIgnoreList
+  DefaultIgnoreList,
+  UploadFile
 } from '../types/EasyYandexS3';
 
 /**
@@ -20,17 +21,18 @@ class EasyYandexS3 {
    *
    * @param {Object} params Параметры соединения, 4 обязательных параметра.
    * @param {Object} params.auth Обязательно. Данные для доступа от сервисного аккаунта
-   * @param {String} params.auth.accessKeyId Обязательно. Идентификатор ключа сервисного аккаунта
-   * @param {String} params.auth.secretAccessKey Обязательно. Cекретный ключ сервисного аккаунта
-   * @param {String} params.Bucket Обязательно. ID бакета
+   * @param {string} params.auth.accessKeyId Обязательно. Идентификатор ключа сервисного аккаунта
+   * @param {string} params.auth.secretAccessKey Обязательно. Cекретный ключ сервисного аккаунта
+   * @param {string} params.Bucket Обязательно. ID бакета
    *
-   * @param {String=} params.endpointUrl Необязательно. Ссылка на S3 сервер, например, на storage.yandexcloud.net
-   * @param {String=} params.region Необязательно. Регион загрузки
+   * @param {string=} params.endpointUrl Необязательно. Ссылка на S3 сервер, например, на storage.yandexcloud.net
+   * @param {string=} params.region Необязательно. Регион загрузки
    * @param {Object=} params.httpOptions Необязательно. Установки http-запроса
-   * @param {Boolean=} params.debug Необязательно. Вывод дополнительной информации в консоль
+   * @param {boolean=} params.debug Необязательно. Вывод дополнительной информации в консоль
+   * 
    */
 
-  public default_params = {
+  public default_params: DefaultParams = {
     endpointUrl: 'https://storage.yandexcloud.net',
     auth: {
       accessKeyId: '',
@@ -52,7 +54,7 @@ class EasyYandexS3 {
 
   private defaultIgnoreList: DefaultIgnoreList = ['.DS_Store'];
 
-  constructor(params) {
+  constructor(params: DefaultParams) {
     const newParams: DefaultParams = { ...this.default_params, ...params };
 
     // Legacy support for old params
@@ -76,19 +78,19 @@ class EasyYandexS3 {
 
   /**
    * Загрузка файла
-   * @param {Object|Array<Object>} file Буфер файла и информация о расширении. Или путь к файлу.
+   * @param {UploadFile|UploadFile[]} file Буфер файла и информация о расширении. Или путь к файлу.
    * @param {Buffer=} file.buffer Буфер файла
-   * @param {String=} file.path Путь к файлу
-   * @param {Boolean=} file.save_name Оставить оригинальное название файла. Работает только в случае передачи пути к файлу.
-   * @param {String=} file.name Устаналивает название загружаемому файлу. Передавать с расширением.
+   * @param {string=} file.path Путь к файлу
+   * @param {boolean=} file.save_name Оставить оригинальное название файла. Работает только в случае передачи пути к файлу.
+   * @param {string=} file.name Устаналивает название загружаемому файлу. Передавать с расширением.
    * @param {Array=} file.ignore Список игнорируемых файлов и папок
    *
    *
-   * @param {String} route Папка загрузки - бакет
+   * @param {string} route Папка загрузки - бакет
    *
    * @returns {Promise<Object>} Результат загрузки
    */
-  public async Upload(file, route) {
+  public async Upload(file: UploadFile | UploadFile[], route: string): Promise<S3.ManagedUpload.SendData | S3.ManagedUpload.SendData[]> {
     if (typeof route !== 'string') {
       throw new Error('route (2nd argument) is not defined');
     }
@@ -105,7 +107,7 @@ class EasyYandexS3 {
       return u;
     }
 
-    if (file.path) {
+    if ('path' in file) {
       file.path = path.join(file.path);
 
       if (!fs.existsSync(file.path))
@@ -148,7 +150,7 @@ class EasyYandexS3 {
     if (debug) this._log('S3', debugObject, params);
 
     try {
-      const s3Promise = await new Promise((resolve, reject) => {
+      const s3Promise: S3.ManagedUpload.SendData = await new Promise((resolve, reject) => {
         s3.upload(params, (err, data) => {
           if (err) return reject(err);
           return resolve(data);
@@ -158,7 +160,7 @@ class EasyYandexS3 {
       return s3Promise;
     } catch (error) {
       if (debug) this._log('S3', debugObject, 'error:', error);
-      return false;
+      throw new Error('S3 upload error');
     }
   }
 
@@ -222,7 +224,7 @@ class EasyYandexS3 {
 
   /**
    * Получение списка директорий и папок
-   * @param {String=} route Необязательно. Путь к папке, которую смотрим
+   * @param {string=} route Необязательно. Путь к папке, которую смотрим
    *
    * @returns {Promise<Object>} Результат просмотра
    */
@@ -263,8 +265,8 @@ class EasyYandexS3 {
 
   /**
    * Скачивание файла
-   * @param {String} routeFullPath Полный путь до файла. С папками, с названием и расширением файла
-   * @param {String=} destinationFullPath Необязательно. Куда сохраняем файл. Абсолютный или относительный, с названием и расширением файла
+   * @param {string} routeFullPath Полный путь до файла. С папками, с названием и расширением файла
+   * @param {string=} destinationFullPath Необязательно. Куда сохраняем файл. Абсолютный или относительный, с названием и расширением файла
    *
    * @returns {Promise<Object>} Результат скачивания и сохранения
    */
@@ -315,7 +317,7 @@ class EasyYandexS3 {
 
   /**
    * Удаление файла из хранилища
-   * @param {String} routeFullPath Полный путь до файла. С папками, с названием и расширением файла
+   * @param {string} routeFullPath Полный путь до файла. С папками, с названием и расширением файла
    *
    * @returns {Promise<Object>} Результат удаления
    */

@@ -1,13 +1,19 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+type ReadDirReturns = {
+  fullFilePath: string;
+  relativeDirPath: string;
+  fileName: string;
+}[]
+
 /**
  * Получение массива всех вложенных файлов и папок и их файлов и папок и их файлов и папок...
- * @param {String} dirPath Путь до папки, которую сканируем
- * @param {String=} originalFilePath
+ * @param {string} dirPath Путь до папки, которую сканируем
+ * @param {string=} originalFilePath
  * @param {Array} ignoreList
  */
-function ReadDir(dirPath, originalFilePath, ignoreList) {
+function ReadDir(dirPath: string, originalFilePath: string, ignoreList: string[]): ReadDirReturns {
   if (!originalFilePath) originalFilePath = dirPath;
   const dirFiles = fs.readdirSync(dirPath);
   const paths = [];
