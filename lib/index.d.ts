@@ -48,9 +48,9 @@ declare class EasyYandexS3 {
      * Получение списка директорий и папок
      * @param {string=} route Необязательно. Путь к папке, которую смотрим
      *
-     * @returns {Promise<Object>} Результат просмотра
+     * @returns {Promise<S3.ListObjectsV2Output>} Результат просмотра
      */
-    GetList(route: any): Promise<unknown>;
+    GetList(route: string): Promise<S3.ListObjectsV2Output>;
     /**
      * Скачивание файла
      * @param {string} routeFullPath Полный путь до файла. С папками, с названием и расширением файла

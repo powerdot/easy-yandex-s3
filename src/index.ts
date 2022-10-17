@@ -57,7 +57,7 @@ class EasyYandexS3 {
   constructor(params: DefaultParams) {
     const newParams: DefaultParams = { ...this.default_params, ...params };
 
-    // Legacy support for old params
+    // Support for legacy params
     if (params.endpoint_url) newParams.endpointUrl = params.endpoint_url;
 
     this.s3 = new AWS.S3({
@@ -242,9 +242,9 @@ class EasyYandexS3 {
    * Получение списка директорий и папок
    * @param {string=} route Необязательно. Путь к папке, которую смотрим
    *
-   * @returns {Promise<Object>} Результат просмотра
+   * @returns {Promise<S3.ListObjectsV2Output>} Результат просмотра
    */
-  public async GetList(route) {
+  public async GetList(route: string): Promise<S3.ListObjectsV2Output> {
     if (!route) route = '/';
     if (route === './') route = '/';
     if (route) route += route.slice(-1) !== '/' ? '/' : '';
@@ -265,7 +265,7 @@ class EasyYandexS3 {
     if (debug) this._log('S3', debugObject, params);
 
     try {
-      const s3Promise = await new Promise((resolve, reject) => {
+      const s3Promise: S3.ListObjectsV2Output = await new Promise((resolve, reject) => {
         s3.listObjectsV2(params, (err, data) => {
           if (err) return reject(err);
           return resolve(data);
@@ -275,7 +275,7 @@ class EasyYandexS3 {
       return s3Promise;
     } catch (error) {
       if (debug) this._log('S3', debugObject, 'error:', error);
-      return false;
+      throw new Error('S3 listObjectsV2 error');
     }
   }
 
