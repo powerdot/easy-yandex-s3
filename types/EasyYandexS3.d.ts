@@ -1,3 +1,5 @@
+import { S3 } from "aws-sdk";
+
 type DefaultParams = {
   /** Необязательно. Ссылка на S3 сервер, например, на storage.yandexcloud.net */
   endpointUrl?: string;
@@ -51,4 +53,10 @@ type UploadFilePath = {
 
 type UploadFile = UploadFileBuffer | UploadFilePath;
 
-export { UploadFile, DefaultParams, DefaultIgnoreList };
+type DownloadedFile = {
+  data: S3.GetObjectOutput;
+  destinationFullPath: string | false;
+  fileReplaced: boolean;
+}
+
+export { DownloadedFile, UploadFile, DefaultParams, DefaultIgnoreList };

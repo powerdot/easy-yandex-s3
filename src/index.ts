@@ -10,7 +10,8 @@ import ReadDir from './ReadDir';
 import type {
   DefaultParams,
   DefaultIgnoreList,
-  UploadFile
+  UploadFile,
+  DownloadedFile
 } from '../types/EasyYandexS3';
 
 /**
@@ -286,7 +287,8 @@ class EasyYandexS3 {
    *
    * @returns {Promise<Object>} Результат скачивания и сохранения
    */
-  public async Download(routeFullPath, destinationFullPath) {
+  public async Download(routeFullPath: string, destinationFullPath: string | false = false):
+    Promise<DownloadedFile | false> {
     if (routeFullPath[0] === '/') routeFullPath = routeFullPath.slice(1);
     if (!destinationFullPath) destinationFullPath = false;
 
@@ -304,7 +306,7 @@ class EasyYandexS3 {
     if (debug) this._log('S3', debugObject, params);
 
     try {
-      const s3Promise = await new Promise((resolve, reject) => {
+      const s3Promise: DownloadedFile = await new Promise((resolve, reject) => {
         s3.getObject(params, (err, data) => {
           if (err) return reject(err);
           // data

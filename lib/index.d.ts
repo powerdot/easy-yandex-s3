@@ -1,5 +1,5 @@
 import type { S3 } from 'aws-sdk';
-import type { DefaultParams, UploadFile } from '../types/EasyYandexS3';
+import type { DefaultParams, UploadFile, DownloadedFile } from '../types/EasyYandexS3';
 /**
  * Создание объекта для работы с S3 хранилищем
  */
@@ -58,7 +58,7 @@ declare class EasyYandexS3 {
      *
      * @returns {Promise<Object>} Результат скачивания и сохранения
      */
-    Download(routeFullPath: any, destinationFullPath: any): Promise<unknown>;
+    Download(routeFullPath: string, destinationFullPath?: string | false): Promise<DownloadedFile | false>;
     /**
      * Удаление файла из хранилища
      * @param {string} routeFullPath Полный путь до файла. С папками, с названием и расширением файла
