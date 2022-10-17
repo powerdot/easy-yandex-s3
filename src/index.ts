@@ -164,14 +164,18 @@ class EasyYandexS3 {
     }
   }
 
-  private _getFileAttributes(file, debugObject) {
+  private _getFileAttributes(file: UploadFile, debugObject: string): {
+    fileBody: Buffer;
+    fileExt: string;
+    fileUploadName: string;
+  } {
     let fileBody;
     let fileExt;
     let fileUploadName;
 
     const { debug } = this;
 
-    if (file.path) {
+    if ('path' in file) {
       fileBody = fs.readFileSync(file.path);
       fileExt = path.extname(file.path);
       if (file.save_name) fileUploadName = path.basename(file.path);

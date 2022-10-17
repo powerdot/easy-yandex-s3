@@ -34,6 +34,8 @@ type UploadFileBuffer = {
   name?: string;
   /** Буфер файла */
   buffer: Buffer;
+  /** Mimetype файла */
+  mimetype?: string;
 }
 
 type UploadFilePath = {
