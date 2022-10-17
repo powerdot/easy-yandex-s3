@@ -193,7 +193,12 @@ class EasyYandexS3 {
     return { fileBody, fileExt, fileUploadName };
   }
 
-  private async _uploadDirectory(dir, params, route, ignoreList) {
+  private async _uploadDirectory(
+    dir: string,
+    params: UploadFile,
+    route: string,
+    ignoreList: DefaultIgnoreList
+  ): Promise<S3.ManagedUpload.SendData[]> {
     const { debug } = this;
     const debugObject = '_uploadDirectory';
 
@@ -204,22 +209,29 @@ class EasyYandexS3 {
     const s3Promises = [];
 
     for (const file of dirContent) {
-      params.path = file.fullFilePath;
-      if (params.name) params.name = false;
-      if (params.save_name) params.name = file.fileName;
+      let file_path = file.fullFilePath;
+      let file_set_name = params.name;
+      let file_original_name = file.fileName;
+      let final_name = "";
+      let save_name = 'save_name' in params;
+      if ('save_name' in params) final_name = params.save_name ? file_original_name : (file_set_name || undefined);
       if (debug)
         this._log('S3', debugObject, 'dir file uploading:', route, 'to', file.relativeDirPath);
-      const s3Promise = this.Upload(params, path.join(route, file.relativeDirPath));
+      const s3Promise = this.Upload({
+        path: file_path,
+        name: final_name,
+        save_name
+      }, path.join(route, file.relativeDirPath));
       s3Promises.push(s3Promise);
     }
 
     return Promise.all(s3Promises);
   }
 
-  private async _uploadArray(array, route) {
+  private async _uploadArray(files: UploadFile[], route: string): Promise<S3.ManagedUpload.SendData[]> {
     const uploaded = [];
 
-    for (const file of array) {
+    for (const file of files) {
       const u = await this.Upload(file, route);
       uploaded.push(u);
     }
