@@ -1,3 +1,4 @@
+import * as AWS from 'aws-sdk';
 import type { S3 } from 'aws-sdk';
 import type { DefaultParams, UploadFile, DownloadedFile } from '../types/EasyYandexS3';
 /**
@@ -65,7 +66,7 @@ declare class EasyYandexS3 {
      *
      * @returns {Promise<Object>} Результат удаления
      */
-    Remove(routeFullPath: any): Promise<unknown>;
+    Remove(routeFullPath: string): Promise<boolean | AWS.AWSError>;
     /**
      * Удаление всех файлов с бакета
      * @returns {Promise<Object>} Результат удаления

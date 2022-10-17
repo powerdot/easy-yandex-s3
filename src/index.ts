@@ -339,7 +339,7 @@ class EasyYandexS3 {
    *
    * @returns {Promise<Object>} Результат удаления
    */
-  public async Remove(routeFullPath) {
+  public async Remove(routeFullPath: string): Promise<boolean | AWS.AWSError> {
     if (routeFullPath[0] === '/') routeFullPath = routeFullPath.slice(1);
 
     const { s3 } = this;
@@ -353,7 +353,7 @@ class EasyYandexS3 {
     if (debug) this._log('S3', debugObject, params);
 
     try {
-      const s3Promise = await new Promise((resolve, reject) => {
+      const s3Promise: boolean | AWS.AWSError = await new Promise((resolve, reject) => {
         s3.deleteObject(params, (err) => {
           if (err) return reject(err);
           return resolve(true);
