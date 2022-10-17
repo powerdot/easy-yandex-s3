@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/powerdot/easy-yandex-s3.svg?branch=master)](https://travis-ci.org/powerdot/easy-yandex-s3) [![YouTube IlyaDevman](https://storage.yandexcloud.net/actid-storage/GitHubImages/gt-yt-overview.png)](https://youtu.be/L_6PiJFaldI)
 
-Использовать S3 API **_Яндекс.Облака_** еще проще.
+Использовать S3 API **_Яндекс.Облака_** еще проще.  
 Хранилище называется у них там **_Object Storage_**.
 
 ✓ Загружайте файл  
