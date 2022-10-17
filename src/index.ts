@@ -91,7 +91,10 @@ class EasyYandexS3 {
    *
    * @returns {Promise<Object>} Результат загрузки
    */
-  public async Upload(file: UploadFile | UploadFile[], route: string): Promise<S3.ManagedUpload.SendData | S3.ManagedUpload.SendData[] | false> {
+  public async Upload(
+    file: UploadFile | UploadFile[],
+    route: string
+  ): Promise<S3.ManagedUpload.SendData | S3.ManagedUpload.SendData[] | false> {
     if (typeof route !== 'string') {
       throw new Error('route (2nd argument) is not defined');
     }
@@ -165,7 +168,10 @@ class EasyYandexS3 {
     }
   }
 
-  private _getFileAttributes(file: UploadFile, debugObject: string): {
+  private _getFileAttributes(
+    file: UploadFile,
+    debugObject: string
+  ): {
     fileBody: Buffer;
     fileExt: string;
     fileUploadName: string;
@@ -229,7 +235,10 @@ class EasyYandexS3 {
     return Promise.all(s3Promises);
   }
 
-  private async _uploadArray(files: UploadFile[], route: string): Promise<S3.ManagedUpload.SendData[]> {
+  private async _uploadArray(
+    files: UploadFile[],
+    route: string
+  ): Promise<S3.ManagedUpload.SendData[]> {
     const uploaded = [];
 
     for (const file of files) {
@@ -287,8 +296,10 @@ class EasyYandexS3 {
    *
    * @returns {Promise<Object>} Результат скачивания и сохранения
    */
-  public async Download(routeFullPath: string, destinationFullPath: string | false = false):
-    Promise<DownloadedFile | false> {
+  public async Download(
+    routeFullPath: string,
+    destinationFullPath: string | false = false
+  ): Promise<DownloadedFile | false> {
     if (routeFullPath[0] === '/') routeFullPath = routeFullPath.slice(1);
     if (!destinationFullPath) destinationFullPath = false;
 
@@ -428,8 +439,8 @@ class EasyYandexS3 {
     }
   }
 
-  private async _getAllObjects() {
-    let objects = [];
+  private async _getAllObjects(): Promise<S3.ObjectList[]> {
+    let objects: S3.ObjectList[] = [];
 
     const helper = async (token = "") => {
       const { Bucket } = this;
