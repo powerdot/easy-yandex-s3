@@ -71,7 +71,7 @@ declare class EasyYandexS3 {
      * Удаление всех файлов с бакета
      * @returns {Promise<Object>} Результат удаления
      */
-    CleanUp(): Promise<false | any[]>;
+    CleanUp(): Promise<boolean | S3.DeleteObjectsOutput[]>;
     private _getAllObjects;
 }
 export default EasyYandexS3;

@@ -371,7 +371,7 @@ class EasyYandexS3 {
    * Удаление всех файлов с бакета
    * @returns {Promise<Object>} Результат удаления
    */
-  public async CleanUp() {
+  public async CleanUp(): Promise<boolean | S3.DeleteObjectsOutput[]> {
     const { Bucket } = this;
     const { s3 } = this;
 
@@ -389,7 +389,7 @@ class EasyYandexS3 {
       return false;
     }
 
-    const s3Promises = [];
+    const s3Promises: Promise<S3.DeleteObjectsOutput>[] = [];
     let chunk = [];
 
     for (let i = 1; i <= objects.length; i++) {
@@ -406,8 +406,8 @@ class EasyYandexS3 {
           },
         };
 
-        const s3Promise = new Promise((resolve, reject) => {
-          s3.deleteObjects(params, (err, data) => {
+        const s3Promise: Promise<S3.DeleteObjectsOutput> = new Promise((resolve, reject) => {
+          s3.deleteObjects(params, (err, data: S3.DeleteObjectsOutput) => {
             if (err) return reject(err);
             return resolve(data);
           });
@@ -419,7 +419,7 @@ class EasyYandexS3 {
     }
 
     try {
-      const s3Promise = await Promise.all(s3Promises);
+      const s3Promise: S3.DeleteObjectsOutput[] = await Promise.all(s3Promises);
       if (debug) this._log('S3', debugObject, 'done:', s3Promise);
       return s3Promise;
     } catch (error) {
