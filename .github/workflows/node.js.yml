@@ -21,5 +21,9 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: ./package.json
+      env:
+        KEY: ${{ secrets.KEY }}
+        SECRET: ${{ secrets.SECRET }}
+        BUCKET: ${{ secrets.BUCKET }}
     - run: npm i
     - run: npm test
